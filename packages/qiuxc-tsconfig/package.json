@@ -1,9 +1,10 @@
 {
-  "name": "@qiuxc/tsconfig",
-  "version": "0.0.0",
-  "private": true,
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  }
+	"name": "@qiuxc/tsconfig",
+	"description": "qiuxchao 的 tsconfig",
+	"main": "base.json",
+	"version": "0.0.0",
+	"license": "MIT",
+	"publishConfig": {
+		"access": "public"
+	}
 }

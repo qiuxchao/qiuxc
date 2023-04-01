@@ -3,6 +3,8 @@
 	"scripts": {
 		"build": "turbo run build",
 		"dev": "turbo run dev --no-cache --continue",
+		"dev:docs": "turbo run dev --no-cache --continue --filter={./apps/docs}... --filter=!eslint-config",
+		"dev:eslint": "turbo run dev --no-cache --continue --filter=eslint-config",
 		"lint": "turbo run lint",
 		"clean": "turbo run clean && rm -rf node_modules",
 		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -24,7 +26,7 @@
 		"@types/react-dom": "^18.0.11",
 		"@changesets/cli": "latest",
 		"eslint": "latest",
-		"@qiuxc/eslint-config-qiuxc": "workspace:*",
+		"@qiuxc/eslint-config": "workspace:*",
 		"husky": "latest",
 		"lint-staged": "latest",
 		"prettier": "latest",

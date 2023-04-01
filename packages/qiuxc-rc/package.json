@@ -1,6 +1,6 @@
 {
 	"name": "@qiuxc/rc",
-	"description": "react 组件库",
+	"description": "qiuxchao 的 react 组件库",
 	"version": "0.0.0",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
@@ -19,7 +19,7 @@
 	"devDependencies": {
 		"@qiuxc/tsconfig": "workspace:*",
 		"eslint": "latest",
-		"@qiuxc/eslint-config-qiuxc": "workspace:*",
+		"@qiuxc/eslint-config": "workspace:*",
 		"@types/react": "^18.0.30",
 		"@types/react-dom": "^18.0.11",
 		"react": "^18.2.0",

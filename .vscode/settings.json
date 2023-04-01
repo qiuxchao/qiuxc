@@ -3,14 +3,9 @@
 	"editor.tabSize": 2,
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"[json]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	"[javascript|javascriptreact|typescript|typescriptreact|json]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
 	},
-	"[jsonc]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	// 默认值已经包含了大多数文件类型了，故不需要再特殊配制
-	// "eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact", "html", "vue", "markdown"],
 	"editor.codeActionsOnSave": {
 		// "source.fixAll.eslint": true
 	},

@@ -27,7 +27,7 @@ ESLint 规则不仅是一套先进的适用于 React/Vue/Typescript 项目的 ES
 ### 内置规则
 
 ```bash
-npm install --save-dev eslint @babel/core @babel/eslint-parser @qiuxc/eslint-config-qiuxc
+npm install --save-dev eslint @babel/core @babel/eslint-parser @qiuxc/eslint-config
 ```
 
 在你的项目的根目录下创建一个 `.eslintrc.js` 文件，并将以下内容复制进去：
@@ -58,7 +58,7 @@ module.exports = {
 ### React
 
 ```bash
-npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/preset-react@latest eslint-plugin-react @qiuxc/eslint-config-qiuxc
+npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/preset-react@latest eslint-plugin-react @qiuxc/eslint-config
 ```
 
 在你的项目的根目录下创建一个 `.eslintrc.js` 文件，并将以下内容复制进去：
@@ -89,7 +89,7 @@ module.exports = {
 ### Vue
 
 ```bash
-npm install --save-dev eslint @babel/core @babel/eslint-parser vue-eslint-parser eslint-plugin-vue @qiuxc/eslint-config-qiuxc
+npm install --save-dev eslint @babel/core @babel/eslint-parser vue-eslint-parser eslint-plugin-vue @qiuxc/eslint-config
 ```
 
 在你的项目的根目录下创建一个 `.eslintrc.js` 文件，并将以下内容复制进去：
@@ -120,7 +120,7 @@ module.exports = {
 ### TypeScript
 
 ```bash
-npm install --save-dev eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin @qiuxc/eslint-config-qiuxc
+npm install --save-dev eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin @qiuxc/eslint-config
 ```
 
 在你的项目的根目录下创建一个 `.eslintrc.js` 文件，并将以下内容复制进去：
@@ -151,7 +151,7 @@ module.exports = {
 ### TypeScript React
 
 ```bash
-npm install --save-dev eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react @qiuxc/eslint-config-qiuxc
+npm install --save-dev eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react @qiuxc/eslint-config
 ```
 
 在你的项目的根目录下创建一个 `.eslintrc.js` 文件，并将以下内容复制进去：
@@ -186,7 +186,7 @@ module.exports = {
 常规方法如下：
 
 ```bash
-npm install --save-dev @babel/core @babel/eslint-parser @typescript-eslint/eslint-plugin @typescript-eslint/parser @vue/eslint-config-typescript eslint @qiuxc/eslint-config-qiuxc eslint-plugin-vue vue-eslint-parser
+npm install --save-dev @babel/core @babel/eslint-parser @typescript-eslint/eslint-plugin @typescript-eslint/parser @vue/eslint-config-typescript eslint @qiuxc/eslint-config eslint-plugin-vue vue-eslint-parser
 ```
 
 在你的项目的根目录下创建一个 `.eslintrc.js` 文件，并将以下内容复制进去：
@@ -258,7 +258,7 @@ eslint-config-qiuxc 包含所有样式相关的规则，故不需要引入 `esli
 eslint-config-qiuxc 提供了一套 Prettier 配置，你可以创建一个 `.prettierrc` 文件，直接复用此配置：
 
 ```json
-"@qiuxc/eslint-config-qiuxc/.prettierrc.js"
+"@qiuxc/eslint-config/.prettierrc.js"
 ```
 
 VSCode 的一个最佳实践就是通过配置 `.vscode/settings.json` 来支持自动修复 Prettier 和 ESLint 错误：

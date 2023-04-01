@@ -1,5 +1,5 @@
 /**
- * ESLint 规则
+ * qiuxchao 的 ESLint 规则
  * https://github.com/qiuxchao/qiuxc/tree/main/packages/eslint-config-qiuxc
  *
  * 贡献者：

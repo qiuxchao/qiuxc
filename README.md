@@ -10,7 +10,7 @@ This MonoRepo Project includes the following:
 - `@qiuxc/rc`: React components
 - `@qiuxc/utils`: shared some utilities
 - `@qiuxc/tsconfig`: shared `tsconfig.json`s used throughout the monorepo
-- `@qiuxc/eslint-config-qiuxc`: ESLint preset
+- `@qiuxc/eslint-config`: ESLint preset
 
 Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
 
