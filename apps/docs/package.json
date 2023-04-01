@@ -1,27 +1,27 @@
 {
-  "name": "@qiuxc/docs",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "build": "next build",
-    "start": "next start ",
-    "dev": "next dev -p 3002",
-    "lint": "next lint",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next"
-  },
-  "dependencies": {
-    "@qiuxc/core": "workspace:*",
-    "@qiuxc/utils": "workspace:*",
-    "next": "latest",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@qiuxc/tsconfig": "workspace:*",
-    "@types/node": "^17.0.12",
-    "@types/react": "^18.0.22",
-    "@types/react-dom": "^18.0.7",
-    "eslint-config-qiuxc": "workspace:*",
-    "typescript": "^4.5.4"
-  }
+	"name": "@qiuxc/docs",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"build": "next build",
+		"start": "next start ",
+		"dev": "next dev -p 3002",
+		"lint": "next lint",
+		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next"
+	},
+	"dependencies": {
+		"@qiuxc/rc": "workspace:*",
+		"@qiuxc/utils": "workspace:*",
+		"next": "latest",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@qiuxc/tsconfig": "workspace:*",
+		"@types/node": "^17.0.12",
+		"@types/react": "^18.0.30",
+		"@types/react-dom": "^18.0.11",
+		"@qiuxc/eslint-config-qiuxc": "workspace:*",
+		"typescript": "latest"
+	}
 }

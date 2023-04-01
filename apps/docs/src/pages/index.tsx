@@ -1,4 +1,4 @@
-import { Button } from '@qiuxc/core';
+import { Button } from '@qiuxc/rc';
 import { useIsomorphicLayoutEffect } from '@qiuxc/utils';
 
 export default function Docs() {

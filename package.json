@@ -1,21 +1,42 @@
 {
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --no-cache --continue",
-    "lint": "turbo run lint",
-    "clean": "turbo run clean && rm -rf node_modules",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "turbo run build --filter=docs^... && changeset publish"
-  },
-  "devDependencies": {
-    "@changesets/cli": "latest",
-    "eslint": "latest",
-    "eslint-config-qiuxc": "workspace:*",
-    "prettier": "latest",
-    "turbo": "latest"
-  },
-  "packageManager": "pnpm@7.29.3"
+	"private": true,
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo run dev --no-cache --continue",
+		"lint": "turbo run lint",
+		"clean": "turbo run clean && rm -rf node_modules",
+		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
+		"changeset": "changeset",
+		"version-packages": "changeset version",
+		"release": "turbo run build --filter=docs^... && changeset publish",
+		"prepare": "husky install"
+	},
+	"lint-staged": {
+		"package.json": "sort-package-json"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.21.3",
+		"@babel/eslint-parser": "^7.19.1",
+		"@babel/preset-react": "^7.18.6",
+		"@types/eslint": "latest",
+		"@types/prettier": "latest",
+		"@types/react": "^18.0.30",
+		"@types/react-dom": "^18.0.11",
+		"@changesets/cli": "latest",
+		"eslint": "latest",
+		"@qiuxc/eslint-config-qiuxc": "workspace:*",
+		"husky": "latest",
+		"lint-staged": "latest",
+		"prettier": "latest",
+		"sort-package-json": "latest",
+		"turbo": "latest",
+		"typescript": "latest",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"eslint-plugin-react": "latest",
+		"@typescript-eslint/parser": "latest",
+		"@typescript-eslint/eslint-plugin": "latest",
+		"tsup": "latest"
+	},
+	"packageManager": "pnpm@8.0.0"
 }

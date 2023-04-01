@@ -1,0 +1,7 @@
+dist
+site/public
+node_modules
+.vscode
+.husky
+.github
+.changeset
