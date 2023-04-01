@@ -1,4 +1,4 @@
-# [eslint-config-qiuxc][网站]
+# [eslint-config][网站]
 
 > 本项目 fork 自 [eslint-config-alloy](https://github.com/AlloyTeam/eslint-config-alloy.git)
 
@@ -253,9 +253,9 @@ module.exports = {
 
 ### 如何结合 Prettier 使用
 
-eslint-config-qiuxc 包含所有样式相关的规则，故不需要引入 `eslint-config-prettier`。只需要安装 `prettier` 及相关 VSCode 插件即可。
+eslint-config 包含所有样式相关的规则，故不需要引入 `eslint-config-prettier`。只需要安装 `prettier` 及相关 VSCode 插件即可。
 
-eslint-config-qiuxc 提供了一套 Prettier 配置，你可以创建一个 `.prettierrc` 文件，直接复用此配置：
+eslint-config 提供了一套 Prettier 配置，你可以创建一个 `.prettierrc` 文件，直接复用此配置：
 
 ```json
 "@qiuxc/eslint-config/.prettierrc.js"

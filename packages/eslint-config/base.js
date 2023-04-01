@@ -1,6 +1,6 @@
 /**
  * qiuxchao 的 ESLint 规则
- * https://github.com/qiuxchao/qiuxc/tree/main/packages/eslint-config-qiuxc
+ * https://github.com/qiuxchao/qiuxc/tree/main/packages/eslint-config
  *
  * 贡献者：
  *   qiuxchao
@@ -59,7 +59,7 @@ module.exports = {
 		/**
 		 * 数组的方法除了 forEach 之外，回调函数必须有返回值
 		 */
-		'array-callback-return': 'error',
+		'array-callback-return': 'warn',
 		/**
 		 * 箭头函数体必须由大括号包裹
 		 * @reason 代码格式问题，最好由 Prettier 解决
@@ -286,7 +286,7 @@ module.exports = {
 		/**
 		 * 禁止使用 console
 		 */
-		'no-console': 'off',
+		'no-console': 'warn',
 		/**
 		 * 禁止对使用 const 定义的常量重新赋值
 		 */
@@ -763,7 +763,7 @@ module.exports = {
 		 * 已定义的变量必须使用
 		 */
 		'no-unused-vars': [
-			'error',
+			'warn',
 			{
 				vars: 'all',
 				args: 'none',

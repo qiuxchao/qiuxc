@@ -12,7 +12,7 @@
 	},
 	"array-callback-return": {
 		"name": "array-callback-return",
-		"value": "error",
+		"value": "warn",
 		"description": "数组的方法除了 forEach 之外，回调函数必须有返回值",
 		"reason": "",
 		"badExample": "<span class=\"token keyword\">const</span> foo <span class=\"token operator\">=</span> <span class=\"token punctuation\">[</span><span class=\"token number\">1</span><span class=\"token punctuation\">,</span> <span class=\"token number\">2</span><span class=\"token punctuation\">,</span> <span class=\"token number\">3</span><span class=\"token punctuation\">]</span><span class=\"token punctuation\">.</span><span class=\"token function\">map</span><span class=\"token punctuation\">(</span><span class=\"token punctuation\">(</span><span class=\"token parameter\">num</span><span class=\"token punctuation\">)</span> <span class=\"token operator\"><mark class=\"eslint-error\" data-tip=\"Array.prototype.map() expects a return value from arrow function.&lt;br/&gt;&lt;span class='eslint-error-rule-id'&gt;eslint(array-callback-return)&lt;/span&gt;\">=></mark></span> <span class=\"token punctuation\">{</span>\n  console<span class=\"token punctuation\">.</span><span class=\"token function\">log</span><span class=\"token punctuation\">(</span>num <span class=\"token operator\">*</span> num<span class=\"token punctuation\">)</span><span class=\"token punctuation\">;</span>\n<span class=\"token punctuation\">}</span><span class=\"token punctuation\">)</span><span class=\"token punctuation\">;</span>",
@@ -551,7 +551,7 @@
 	},
 	"no-console": {
 		"name": "no-console",
-		"value": "off",
+		"value": "warn",
 		"description": "禁止使用 console",
 		"reason": "",
 		"badExample": "",
@@ -1702,7 +1702,7 @@
 	"no-unused-vars": {
 		"name": "no-unused-vars",
 		"value": [
-			"error",
+			"warn",
 			{ "vars": "all", "args": "none", "ignoreRestSiblings": false, "caughtErrors": "none" }
 		],
 		"description": "已定义的变量必须使用",

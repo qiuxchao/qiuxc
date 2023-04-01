@@ -7,10 +7,10 @@
 		"eslintrc",
 		"config"
 	],
-	"homepage": "https://github.com/qiuxchao/qiuxc/tree/main/packages/eslint-config-qiuxc",
+	"homepage": "https://github.com/qiuxchao/qiuxc/tree/main/packages/eslint-config",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/qiuxchao/qiuxc/tree/main/packages/eslint-config-qiuxc"
+		"url": "https://github.com/qiuxchao/qiuxc/tree/main/packages/eslint-config"
 	},
 	"author": "qiuxchao",
 	"contributors": [],

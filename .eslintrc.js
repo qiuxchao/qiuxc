@@ -4,6 +4,7 @@ module.exports = {
 		browser: true,
 		es2021: true,
 	},
-	// This tells ESLint to load the config from the package `eslint-config-qiuxc`
+	// This tells ESLint to load the config from the package `@qiuxc/eslint-config`
 	extends: ['@qiuxc'],
+	rules: {},
 };
