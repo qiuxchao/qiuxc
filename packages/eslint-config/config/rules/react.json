@@ -188,7 +188,7 @@
 	},
 	"react/jsx-handler-names": {
 		"name": "react/jsx-handler-names",
-		"value": "off",
+		"value": "warn",
 		"description": "handler 的名称必须是 onXXX 或 handleXXX",
 		"reason": "",
 		"badExample": "",

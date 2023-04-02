@@ -59,7 +59,7 @@ module.exports = {
 		/**
 		 * 数组的方法除了 forEach 之外，回调函数必须有返回值
 		 */
-		'array-callback-return': 'warn',
+		'array-callback-return': 'error',
 		/**
 		 * 箭头函数体必须由大括号包裹
 		 * @reason 代码格式问题，最好由 Prettier 解决
@@ -195,9 +195,9 @@ module.exports = {
 		 */
 		'max-classes-per-file': 'off',
 		/**
-		 * 代码块嵌套的深度禁止超过 5 层
+		 * 代码块嵌套的深度禁止超过 3 层
 		 */
-		'max-depth': ['error', 5],
+		'max-depth': ['error', 3],
 		/**
 		 * 限制一个文件最多的行数
 		 */
@@ -284,7 +284,7 @@ module.exports = {
 		 */
 		'no-cond-assign': ['error', 'except-parens'],
 		/**
-		 * 禁止使用 console
+		 * 谨慎使用 console
 		 */
 		'no-console': 'warn',
 		/**
@@ -842,7 +842,7 @@ module.exports = {
 		 * 必须使用 a = {b} 而不是 a = {b: b}
 		 * @reason 有时后者可以使代码结构更清晰
 		 */
-		'object-shorthand': 'off',
+		'object-shorthand': 'warn',
 		/**
 		 * 禁止变量申明时用逗号一次申明多个
 		 */
@@ -862,7 +862,7 @@ module.exports = {
 		/**
 		 * 申明后不再被修改的变量必须使用 const 来申明
 		 */
-		'prefer-const': 'off',
+		'prefer-const': 'warn',
 		/**
 		 * 必须使用解构赋值
 		 */
@@ -911,7 +911,7 @@ module.exports = {
 		/**
 		 * parseInt 必须传入第二个参数
 		 */
-		radix: 'error',
+		radix: 'off',
 		/**
 		 * 禁止将 await 或 yield 的结果做为运算符的后面项
 		 * @reason 这样会导致不符合预期的结果
@@ -922,7 +922,7 @@ module.exports = {
 		/**
 		 * async 函数中必须存在 await 语句
 		 */
-		'require-await': 'off',
+		'require-await': 'error',
 		/**
 		 * 正则表达式中必须要加上 u 标志
 		 */

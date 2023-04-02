@@ -1,5 +1,6 @@
 dist
 site/public
+site/index.html
 node_modules
 .vscode
 .husky

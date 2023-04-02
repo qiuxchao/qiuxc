@@ -20,14 +20,15 @@
 		"index.js",
 		"base.js",
 		"react.js",
-		"tsconfig.json",
+		".prettierrc.js",
+		".prettierignore",
 		"typescript.js",
 		"vue.js"
 	],
 	"scripts": {
 		"start": "pnpm dev",
 		"dev": "run-p dev:*",
-		"dev:eslintrc": "nodemon",
+		"dev:eslintrc": "chokidar \"test/**/*.{js,jsx,ts,tsx,vue,json}\" \"scripts/**/*.ts\" -c \"pnpm build:eslintrc\"",
 		"dev:copyfiles": "pnpm build:copyfiles && chokidar \"site/public/**/*\" -c \"pnpm build:copyfiles\"",
 		"dev:webpack-dev-server": "webpack serve --open",
 		"build": "run-s build:*",
@@ -67,11 +68,11 @@
 		"eslint-config-prettier": "latest",
 		"eslint-plugin-react": "latest",
 		"eslint-plugin-vue": "latest",
+		"eslint-plugin-simple-import-sort": "^8.0.0",
 		"html-webpack-plugin": "^5.5.0",
 		"insert-tag": "^0.1.2",
 		"mobi-plugin-color": "^1.0.0",
 		"mobi.css": "^3.1.1",
-		"nodemon": "^2.0.22",
 		"npm-run-all": "^4.1.5",
 		"prettier": "latest",
 		"querystring": "latest",
@@ -98,7 +99,8 @@
 		"eslint-plugin-react": ">=7.31.8",
 		"eslint-plugin-vue": ">=9.5.1",
 		"typescript": "4.x || 5.x",
-		"vue-eslint-parser": "9.x"
+		"vue-eslint-parser": "9.x",
+		"eslint-plugin-simple-import-sort": ">=8.0.0"
 	},
 	"peerDependenciesMeta": {
 		"@babel/eslint-parser": {

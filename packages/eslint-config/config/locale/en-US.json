@@ -659,5 +659,10 @@
 	"props 必须有注释": "require props to have a comment",
 	"禁止 v-on 的值使用函数调用的格式": "enforce writing style for handlers in `v-on` directives",
 	"禁止 class 和 interface 合并类型": "Disallow unsafe declaration merging",
-	"联合类型和交叉类型必须排序": "Enforce constituents of a type union/intersection to be sorted alphabetically"
+	"联合类型和交叉类型必须排序": "Enforce constituents of a type union/intersection to be sorted alphabetically",
+	"代码块嵌套的深度禁止超过 3 层": "代码块嵌套的深度禁止超过 3 层",
+	"警告使用 console": "警告使用 console",
+	"注意使用 console": "注意使用 console",
+	"谨慎使用 console": "谨慎使用 console",
+	"已定义的变量应该使用": "已定义的变量应该使用"
 }

@@ -105,7 +105,7 @@ module.exports = {
 		/**
 		 * handler 的名称必须是 onXXX 或 handleXXX
 		 */
-		'react/jsx-handler-names': 'off',
+		'react/jsx-handler-names': 'warn',
 		/**
 		 * 数组中的 jsx 必须有 key
 		 */
