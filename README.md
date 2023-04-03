@@ -35,11 +35,11 @@ git init . && git add . && git commit -m "Init"
 
 ### Useful commands
 
-- `yarn build` - Build all packages and the docs site
-- `yarn dev` - Develop all packages and the docs site
-- `yarn lint` - Lint all packages
-- `yarn changeset` - Generate a changeset
-- `yarn clean` - Clean up all `node_modules` and `dist` folders (runs each package's clean script)
+- `pnpm build` - Build all packages and the docs site
+- `pnpm dev` - Develop all packages and the docs site
+- `pnpm lint` - Lint all packages
+- `pnpm changeset` - Generate a changeset
+- `pnpm clean` - Clean up all `node_modules` and `dist` folders (runs each package's clean script)
 
 ### Changing the npm organization scope
 
@@ -47,7 +47,7 @@ The npm organization scope for this design system starter is `@qiuxc`. To change
 
 - Rename folders in `packages/*` to replace `qiuxc` with your desired scope
 - Search and replace `qiuxc` with your desired scope
-- Re-run `yarn install`
+- Re-run `pnpm install`
 
 ## Versioning and Publishing packages
 
