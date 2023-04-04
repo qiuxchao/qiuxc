@@ -24,7 +24,7 @@
 		".prettierignore",
 		"typescript.js",
 		"vue.js",
-		"custom"
+		"custom.js"
 	],
 	"scripts": {
 		"start": "pnpm dev",
