@@ -21,7 +21,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
-            fetch-depth: 2
+          fetch-depth: 2
 
       - name: Setup pnpm 8
         uses: pnpm/action-setup@v2.0.1
@@ -46,7 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Send a Slack notification if a publish happens
+      - name: Echo Publish Finished Text
         if: steps.changesets.outputs.published == 'true'
         # You can do something when a publish happens.
-        run: my-slack-bot send-notification --message "A new version of ${GITHUB_REPOSITORY} was published!"
+        run: echo "🎉 Publish Finished!"
