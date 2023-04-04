@@ -1,5 +1,11 @@
 # @qiuxc/eslint-config
 
+## 0.0.3
+
+### Patch Changes
+
+- 124d382: export custom.js
+
 ## 0.0.2
 
 ### Patch Changes
