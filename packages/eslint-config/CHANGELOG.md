@@ -1,5 +1,11 @@
 # @qiuxc/eslint-config
 
+## 0.0.4
+
+### Patch Changes
+
+- 9ca85f2: add custom.js
+
 ## 0.0.3
 
 ### Patch Changes
