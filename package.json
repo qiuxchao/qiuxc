@@ -28,6 +28,8 @@
 		"@changesets/cli": "latest",
 		"eslint": "latest",
 		"@qiuxc/eslint-config": "workspace:*",
+		"@qiuxc/eslint-plugin": "workspace:*",
+		"eslint-plugin-simple-import-sort": "^8.0.0",
 		"husky": "latest",
 		"lint-staged": "latest",
 		"prettier": "latest",

@@ -1,6 +1,6 @@
 import url from 'url';
 import cookie from 'cookie';
-import querystring from 'querystring';
+import qs from 'qs';
 import { locale, avaliableLanguages, Languages } from '../config';
 
 /**
@@ -75,7 +75,7 @@ export function getLanguage(): Languages {
 }
 
 export function getQuery() {
-	return querystring.parse(location.search.replace(/^\?/, ''));
+	return qs.parse(location.search.replace(/^\?/, ''));
 }
 
 function setCookie(name: string, value: string, days = 365) {
@@ -123,7 +123,7 @@ export function newUrl({ path, query }: UrlOptions) {
 	}
 
 	// 排序 query
-	const newQuery: querystring.ParsedUrlQuery = {};
+	const newQuery: any = {};
 	Object.entries(newUrlObject.query)
 		.sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
 		.forEach(([key, value]) => {

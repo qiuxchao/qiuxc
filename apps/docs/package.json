@@ -22,6 +22,7 @@
 		"@types/react": "^18.0.30",
 		"@types/react-dom": "^18.0.11",
 		"@qiuxc/eslint-config": "workspace:*",
+		"@qiuxc/eslint-plugin": "workspace:*",
 		"typescript": "latest"
 	}
 }

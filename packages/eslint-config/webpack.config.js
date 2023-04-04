@@ -33,7 +33,7 @@ module.exports = {
 		devMiddleware: {
 			writeToDisk: true,
 		},
-		watchFiles: ['base.js', 'react.js', 'vue.js', 'typescript.js'],
+		watchFiles: ['base.js', 'react.js', 'vue.js', 'typescript.js', 'custom.js'],
 	},
 	plugins: [new HtmlWebpackPlugin({ template: './site/index.html' })],
 };

@@ -12,29 +12,34 @@ const prettierVue = require('eslint-config-prettier/vue');
 const prettierTypeScript = require('eslint-config-prettier/@typescript-eslint');
 
 const prettierRules = {
-  index: prettier.rules,
-  react: prettierReact.rules,
-  vue: prettierVue.rules,
-  typescript: prettierTypeScript.rules,
+	index: prettier.rules,
+	react: prettierReact.rules,
+	vue: prettierVue.rules,
+	typescript: prettierTypeScript.rules,
 };
 
 const RULE_PREFIX_MAP = {
-  index: '',
-  react: 'react/',
-  vue: 'vue/',
-  typescript: '@typescript-eslint/',
+	index: '',
+	react: 'react/',
+	vue: 'vue/',
+	typescript: '@typescript-eslint/',
+	custom: '',
 };
 type RulePrefix = keyof typeof RULE_PREFIX_MAP;
-const namespaces: RulePrefix[] = ['index', 'react', 'vue', 'typescript'];
+const namespaces: RulePrefix[] = ['index', 'react', 'vue', 'typescript', 'custom'];
 
-namespaces.forEach((namespace) => {
-  fs.readdirSync(path.resolve(__dirname, '../test', namespace))
-    .filter((ruleName) => fs.lstatSync(path.resolve(__dirname, '../test', namespace, ruleName)).isDirectory())
-    .forEach((ruleName) => {
-      if (typeof prettierRules[namespace][`${RULE_PREFIX_MAP[namespace]}${ruleName}`] !== 'undefined') {
-        const rulePath = path.resolve(__dirname, '../test', namespace, ruleName);
-        rimraf.sync(rulePath);
-        console.log(`已删除 ${rulePath}`);
-      }
-    });
+namespaces.forEach(namespace => {
+	fs.readdirSync(path.resolve(__dirname, '../test', namespace))
+		.filter(ruleName =>
+			fs.lstatSync(path.resolve(__dirname, '../test', namespace, ruleName)).isDirectory(),
+		)
+		.forEach(ruleName => {
+			if (
+				typeof prettierRules[namespace][`${RULE_PREFIX_MAP[namespace]}${ruleName}`] !== 'undefined'
+			) {
+				const rulePath = path.resolve(__dirname, '../test', namespace, ruleName);
+				rimraf.sync(rulePath);
+				console.log(`已删除 ${rulePath}`);
+			}
+		});
 });

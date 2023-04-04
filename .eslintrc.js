@@ -5,6 +5,6 @@ module.exports = {
 		es2021: true,
 	},
 	// This tells ESLint to load the config from the package `@qiuxc/eslint-config`
-	extends: ['@qiuxc'],
+	extends: ['@qiuxc', '@qiuxc/react', '@qiuxc/typescript'],
 	rules: {},
 };

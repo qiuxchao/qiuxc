@@ -34,7 +34,7 @@ npm install --save-dev eslint @babel/core @babel/eslint-parser @qiuxc/eslint-con
 
 ```js
 module.exports = {
-  extends: ['qiuxc'],
+  extends: ['@qiuxc'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
@@ -65,7 +65,7 @@ npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/preset-rea
 
 ```js
 module.exports = {
-  extends: ['qiuxc', 'qiuxc/react'],
+  extends: ['@qiuxc', '@qiuxc/react'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
@@ -96,7 +96,7 @@ npm install --save-dev eslint @babel/core @babel/eslint-parser vue-eslint-parser
 
 ```js
 module.exports = {
-  extends: ['qiuxc', 'qiuxc/vue'],
+  extends: ['@qiuxc', '@qiuxc/vue'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
@@ -127,7 +127,7 @@ npm install --save-dev eslint typescript @typescript-eslint/parser @typescript-e
 
 ```js
 module.exports = {
-  extends: ['qiuxc', 'qiuxc/typescript'],
+  extends: ['@qiuxc', '@qiuxc/typescript'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
@@ -158,7 +158,7 @@ npm install --save-dev eslint typescript @typescript-eslint/parser @typescript-e
 
 ```js
 module.exports = {
-  extends: ['qiuxc', 'qiuxc/react', 'qiuxc/typescript'],
+  extends: ['@qiuxc', '@qiuxc/react', '@qiuxc/typescript'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
@@ -193,7 +193,7 @@ npm install --save-dev @babel/core @babel/eslint-parser @typescript-eslint/eslin
 
 ```js
 module.exports = {
-  extends: ['qiuxc', 'qiuxc/vue', 'qiuxc/typescript'],
+  extends: ['@qiuxc', '@qiuxc/vue', '@qiuxc/typescript'],
   parser: 'vue-eslint-parser',
   parserOptions: {
     parser: {
