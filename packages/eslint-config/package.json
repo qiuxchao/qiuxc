@@ -106,6 +106,9 @@
 		"eslint-plugin-simple-import-sort": "latest"
 	},
 	"peerDependenciesMeta": {
+		"@qiuxc/eslint-plugin": {
+			"optional": true
+		},
 		"@babel/eslint-parser": {
 			"optional": true
 		},
