@@ -1,7 +1,7 @@
 {
 	"name": "@qiuxc/eslint-config",
 	"description": "qiuxchao 的 ESLint 规则",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"keywords": [
 		"eslint",
 		"eslintrc",
