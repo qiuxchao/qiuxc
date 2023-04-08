@@ -1,5 +1,11 @@
 # @qiuxc/eslint-config
 
+## 0.0.5
+
+### Patch Changes
+
+- 9362469: change peer deps
+
 ## 0.0.4
 
 ### Patch Changes
