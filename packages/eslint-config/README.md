@@ -159,7 +159,7 @@ npm install --save-dev eslint typescript @typescript-eslint/parser @typescript-e
 
 ```js
 module.exports = {
-  extends: ['@qiuxc', '@qiuxc/react', '@qiuxc/typescript'],
+  extends: ['@qiuxc', '@qiuxc/eslint-config/react', '@qiuxc/eslint-config/typescript'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
