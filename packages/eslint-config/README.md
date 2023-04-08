@@ -14,6 +14,7 @@ ESLint 规则不仅是一套先进的适用于 React/Vue/Typescript 项目的 ES
 - [TypeScript](#typescript)
 - [TypeScript React](#typescript-react)
 - [TypeScript Vue](#typescript-vue)
+- [Custom](#custom)
 
 ## 设计理念
 
@@ -65,7 +66,7 @@ npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/preset-rea
 
 ```js
 module.exports = {
-  extends: ['@qiuxc', '@qiuxc/react'],
+  extends: ['@qiuxc', '@qiuxc/eslint-config/react'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
@@ -96,7 +97,7 @@ npm install --save-dev eslint @babel/core @babel/eslint-parser vue-eslint-parser
 
 ```js
 module.exports = {
-  extends: ['@qiuxc', '@qiuxc/vue'],
+  extends: ['@qiuxc', '@qiuxc/eslint-config/vue'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
@@ -127,7 +128,7 @@ npm install --save-dev eslint typescript @typescript-eslint/parser @typescript-e
 
 ```js
 module.exports = {
-  extends: ['@qiuxc', '@qiuxc/typescript'],
+  extends: ['@qiuxc', '@qiuxc/eslint-config/typescript'],
   env: {
     // 你的环境变量（包含多个预定义的全局变量）
     //
@@ -193,7 +194,7 @@ npm install --save-dev @babel/core @babel/eslint-parser @typescript-eslint/eslin
 
 ```js
 module.exports = {
-  extends: ['@qiuxc', '@qiuxc/vue', '@qiuxc/typescript'],
+  extends: ['@qiuxc', '@qiuxc/eslint-config/vue', '@qiuxc/eslint-config/typescript'],
   parser: 'vue-eslint-parser',
   parserOptions: {
     parser: {
@@ -227,6 +228,45 @@ module.exports = {
     // https://github.com/vuejs/vue-eslint-parser/issues/104
     // https://github.com/typescript-eslint/typescript-eslint/pull/5318
     '@typescript-eslint/prefer-optional-chain': 'off',
+  },
+};
+```
+
+### custom
+
+自定义规则，结合 react 使用。
+
+自定义规则包括：
+
+- jsx 中的 className 禁止含有多余空格
+- react 组件中的 hooks 和方法必须要有注释说明
+- 导入按规则排序
+
+```bash
+npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/preset-react@latest eslint-plugin-react @qiuxc/eslint-config @qiuxc/eslint-plugin simple-import-sort
+```
+
+在你的项目的根目录下创建一个 `.eslintrc.js` 文件，并将以下内容复制进去：
+
+```js
+module.exports = {
+  extends: ['@qiuxc', '@qiuxc/eslint-config/react', '@qiuxc/eslint-config/custom'],
+  env: {
+    // 你的环境变量（包含多个预定义的全局变量）
+    //
+    // browser: true,
+    // node: true,
+    // mocha: true,
+    // jest: true,
+    // jquery: true
+  },
+  globals: {
+    // 你的全局变量（设置为 false 表示它不允许被重新赋值）
+    //
+    // myGlobal: false
+  },
+  rules: {
+    // 自定义你的规则
   },
 };
 ```
