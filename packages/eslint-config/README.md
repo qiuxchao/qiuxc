@@ -243,7 +243,7 @@ module.exports = {
 - 导入按规则排序
 
 ```bash
-npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/preset-react@latest eslint-plugin-react @qiuxc/eslint-config @qiuxc/eslint-plugin simple-import-sort
+npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/preset-react@latest eslint-plugin-react @qiuxc/eslint-config @qiuxc/eslint-plugin eslint-plugin-simple-import-sort
 ```
 
 在你的项目的根目录下创建一个 `.eslintrc.js` 文件，并将以下内容复制进去：
