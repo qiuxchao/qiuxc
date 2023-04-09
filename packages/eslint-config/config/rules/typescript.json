@@ -827,11 +827,11 @@
 	},
 	"@typescript-eslint/no-unused-vars": {
 		"name": "@typescript-eslint/no-unused-vars",
-		"value": "off",
+		"value": "warn",
 		"description": "已定义的变量必须使用",
 		"reason": "",
-		"badExample": "",
-		"goodExample": "",
+		"badExample": "<span class=\"token keyword\">const</span> <mark class=\"eslint-error\" data-tip=\"&amp;apos;a&amp;apos; is assigned a value but never used.&lt;br/&gt;&lt;span class='eslint-error-rule-id'&gt;eslint(@typescript-eslint/no-unused-vars)&lt;/span&gt;\">a</mark> <span class=\"token operator\">=</span> <span class=\"token number\">1</span><span class=\"token punctuation\">;</span>",
+		"goodExample": "<span class=\"token keyword\">const</span> b <span class=\"token operator\">=</span> <span class=\"token number\">1</span><span class=\"token punctuation\">;</span>\n<span class=\"token builtin\">console</span><span class=\"token punctuation\">.</span><span class=\"token function\">log</span><span class=\"token punctuation\">(</span>b<span class=\"token punctuation\">)</span><span class=\"token punctuation\">;</span>",
 		"fixable": false,
 		"extendsBaseRule": "no-unused-vars",
 		"requiresTypeChecking": false

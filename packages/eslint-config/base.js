@@ -8,9 +8,9 @@
  *
  * 依赖版本：
  *   eslint latest
- *   @babel/core ^7.21.3
- *   @babel/eslint-parser ^7.19.1
- *   @babel/preset-react ^7.18.6
+ *   @babel/core latest
+ *   @babel/eslint-parser latest
+ *   @babel/preset-react latest
  *   eslint-plugin-react latest
  *   vue-eslint-parser latest
  *   eslint-plugin-vue latest

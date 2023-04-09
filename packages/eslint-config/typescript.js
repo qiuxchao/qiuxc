@@ -8,9 +8,9 @@
  *
  * 依赖版本：
  *   eslint latest
- *   @babel/core ^7.21.3
- *   @babel/eslint-parser ^7.19.1
- *   @babel/preset-react ^7.18.6
+ *   @babel/core latest
+ *   @babel/eslint-parser latest
+ *   @babel/preset-react latest
  *   eslint-plugin-react latest
  *   vue-eslint-parser latest
  *   eslint-plugin-vue latest
@@ -416,7 +416,7 @@ module.exports = {
 		 * 已定义的变量必须使用
 		 */
 		'no-unused-vars': 'off',
-		'@typescript-eslint/no-unused-vars': 'off',
+		'@typescript-eslint/no-unused-vars': 'warn',
 		/**
 		 * 禁止在定义变量之前就使用它
 		 * @reason 编译阶段检查就足够了
