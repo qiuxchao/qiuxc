@@ -265,7 +265,7 @@
 	},
 	"react/jsx-no-leaked-render": {
 		"name": "react/jsx-no-leaked-render",
-		"value": "off",
+		"value": "error",
 		"description": "使用 && 渲染组件时，禁止条件是 0 '' 或 NaN",
 		"reason": "",
 		"badExample": "",
