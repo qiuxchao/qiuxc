@@ -1,5 +1,11 @@
 # @qiuxc/eslint-config
 
+## 0.0.6
+
+### Patch Changes
+
+- f1f20d5: ts no-used change
+
 ## 0.0.5
 
 ### Patch Changes
