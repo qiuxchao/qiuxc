@@ -1,5 +1,11 @@
 # @qiuxc/eslint-config
 
+## 0.0.7
+
+### Patch Changes
+
+- b92e05e: 关闭 react/jsx-no-leaked-render（已经是布尔值的也会被转换，没有必要），关闭 complexity
+
 ## 0.0.6
 
 ### Patch Changes
