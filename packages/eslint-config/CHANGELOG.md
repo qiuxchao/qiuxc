@@ -1,5 +1,11 @@
 # @qiuxc/eslint-config
 
+## 0.0.8
+
+### Patch Changes
+
+- cc11ad2: no-debugger error -> warn
+
 ## 0.0.7
 
 ### Patch Changes
