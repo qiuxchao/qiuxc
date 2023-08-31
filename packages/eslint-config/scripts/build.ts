@@ -258,12 +258,12 @@ class Builder {
 	}
 
 	/** 经过 Prettier 格式化后写入文件 */
-	private writeWithPrettier(filePath: string, content: string, parser = 'babel') {
+	private async writeWithPrettier(filePath: string, content: string, parser = 'babel') {
 		fs.writeFileSync(
 			filePath,
 			// 使用 prettier 格式化文件内容
-			prettier.format(content, {
-				...require('../.prettierrc'),
+			await prettier.format(content, {
+				...require('@qiuxc/prettier-config'),
 				parser,
 			}),
 			'utf-8',

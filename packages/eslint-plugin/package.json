@@ -21,9 +21,9 @@
 		"requireindex": "^1.2.0"
 	},
 	"devDependencies": {
-		"eslint": "latest",
-		"eslint-plugin-eslint-plugin": "latest",
-		"eslint-plugin-node": "latest",
+		"eslint": "^8.48.0",
+		"eslint-plugin-eslint-plugin": "^5.1.1",
+		"eslint-plugin-node": "^11.1.0",
 		"mocha": "^10.0.0"
 	},
 	"peerDependencies": {

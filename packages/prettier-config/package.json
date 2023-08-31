@@ -1,0 +1,10 @@
+{
+  "name": "@qiuxc/prettier-config",
+  "description": "qiuxchao 的 prettier preset",
+  "main": ".prettierrc.js",
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

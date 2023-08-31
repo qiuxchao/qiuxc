@@ -12,6 +12,7 @@ This MonoRepo Project includes the following:
 - `@qiuxc/tsconfig`: shared `tsconfig.json`s used throughout the monorepo
 - `@qiuxc/eslint-config`: ESLint preset
 - `@qiuxc/eslint-plugin`: ESLint plugin
+- `@qiuxc/prettier-config`: Prettier plugin
 
 ### Commands
 

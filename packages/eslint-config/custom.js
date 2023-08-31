@@ -20,10 +20,10 @@
  * 此文件是由脚本 scripts/build.ts 自动生成
  */
 module.exports = {
-	parserOptions: {
+		parserOptions: {
 		babelOptions: {
 			presets: ['@babel/preset-react'],
-		},
+		},FF
 	},
 	plugins: ['@qiuxc', 'simple-import-sort'],
 	rules: {

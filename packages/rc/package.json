@@ -18,13 +18,13 @@
 	},
 	"devDependencies": {
 		"@qiuxc/tsconfig": "workspace:*",
-		"eslint": "latest",
+		"eslint": "^8.48.0",
 		"@qiuxc/eslint-config": "workspace:*",
 		"@types/react": "^18.0.30",
 		"@types/react-dom": "^18.0.11",
 		"react": "^18.2.0",
-		"tsup": "latest",
-		"typescript": "latest"
+		"tsup": "^7.2.0",
+		"typescript": "^5.2.2"
 	},
 	"publishConfig": {
 		"access": "public"
