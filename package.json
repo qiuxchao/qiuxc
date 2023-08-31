@@ -3,6 +3,7 @@
 	"scripts": {
 		"build": "turbo run build",
 		"build:eslint": "turbo run build --filter=eslint-config",
+		"build:prettier": "turbo run build --filter=prettier-config",
 		"dev": "turbo run dev --no-cache --continue",
 		"dev:docs": "turbo run dev --no-cache --continue --filter={./apps/docs}... --filter=!eslint-config",
 		"dev:eslint": "turbo run dev --no-cache --continue --filter=eslint-config",
