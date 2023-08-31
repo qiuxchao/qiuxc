@@ -5,7 +5,7 @@ module.exports = {
 	// 使用 2 个空格缩进
 	tabWidth: 2,
 	// 不使用缩进符，而使用空格
-	useTabs: true,
+	useTabs: false,
 	// 行尾需要有分号
 	semi: true,
 	// 使用单引号
@@ -41,4 +41,4 @@ module.exports = {
 	embeddedLanguageFormatting: 'auto',
 	// html, vue, jsx 中每个属性占一行
 	singleAttributePerLine: false,
-}
+};
