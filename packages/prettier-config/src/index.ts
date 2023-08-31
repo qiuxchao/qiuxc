@@ -1,5 +1,4 @@
-// .prettierrc.js
-module.exports = {
+export default {
 	// 一行最多 100 字符
 	printWidth: 100,
 	// 使用 2 个空格缩进
@@ -41,4 +40,4 @@ module.exports = {
 	embeddedLanguageFormatting: 'auto',
 	// html, vue, jsx 中每个属性占一行
 	singleAttributePerLine: false,
-};
+}

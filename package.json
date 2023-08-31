@@ -29,6 +29,7 @@
 		"eslint": "^8.48.0",
 		"@qiuxc/eslint-config": "workspace:*",
 		"@qiuxc/eslint-plugin": "workspace:*",
+		"@qiuxc/prettier-config": "workspace:*",
 		"eslint-plugin-simple-import-sort": "^10.0.0",
 		"husky": "^8.0.3",
 		"lint-staged": "^14.0.1",
@@ -44,5 +45,6 @@
 		"@typescript-eslint/eslint-plugin": "^6.5.0",
 		"tsup": "^7.2.0"
 	},
-	"packageManager": "pnpm@8.0.0"
+	"packageManager": "pnpm@8.0.0",
+	"prettier": "@qiuxc/prettier-config"
 }

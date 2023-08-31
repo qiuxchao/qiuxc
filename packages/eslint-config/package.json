@@ -20,8 +20,6 @@
     "index.js",
     "base.js",
     "react.js",
-    ".prettierrc.js",
-    ".prettierignore",
     "typescript.js",
     "vue.js",
     "custom.js"
