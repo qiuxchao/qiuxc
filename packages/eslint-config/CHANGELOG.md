@@ -1,5 +1,11 @@
 # @qiuxc/eslint-config
 
+## 0.0.9
+
+### Patch Changes
+
+- 6501bf5: 修复 typescript 规则不生效问题
+
 ## 0.0.8
 
 ### Patch Changes
