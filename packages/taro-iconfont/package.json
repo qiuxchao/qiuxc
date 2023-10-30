@@ -1,23 +1,23 @@
 {
   "name": "@qiuxc/taro-iconfont",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "将 iconfont 生成为 taro 组件",
   "keywords": [],
   "author": "qiuxchao",
   "license": "ISC",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.cjs"
     }
   },
-  "main": "./dist/index.cjs",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.cjs",
+  "types": "./lib/index.d.ts",
   "files": [
-    "dist"
+    "lib"
   ],
   "bin": {
-    "taro-iconfont": "./dist/index.cjs"
+    "taro-iconfont": "./lib/index.cjs"
   },
   "scripts": {
     "build": "unbuild",

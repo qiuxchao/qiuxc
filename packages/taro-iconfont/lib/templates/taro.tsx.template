@@ -1,0 +1,62 @@
+/* eslint-disable no-param-reassign */
+import { memo, useEffect, useState } from 'react';
+import React from 'react';
+import { View } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+
+import './index.scss';
+let svgMap: Record<string, string> = #svgMap#;
+const hex2rgb = function (hex:string) {
+  let rgb: number[] = [];
+
+  hex = hex.substr(1);
+  if (hex.length === 3) {
+    hex = hex.replace(/(.)/g, '$1$1');
+  }
+  hex.replace(/../g, function (color) {
+    rgb.push(parseInt(color, 0x10));
+    return color;
+  });
+  return `rgb(${rgb.join(',')})`;
+};
+// 处理颜色
+const generateBg = (str: string, color: string | string[], size: number) => {
+  if (color.length !== 0) {
+    let resColors: string[] = [];
+    if (typeof color === 'string') {
+      let tmpColor = color.indexOf('#') === 0 ? hex2rgb(color) : color;
+      str = str.replace(/fill= '([^\)]+\))/, `fill='${tmpColor}`);
+    } else {
+      resColors = color.map(function (item) {
+        return item.indexOf('#') === 0 ? hex2rgb(item) : item;
+      });
+      let nowIndex = 0;
+      // eslint-disable-next-line max-params
+      str = str.replace(/fill= '([^\)]+\))/g, function (item) {
+        if (nowIndex >= resColors.length) {
+          return item;
+        }
+        return `fill='${resColors[nowIndex++]}`;
+      });
+    }
+  }
+
+  str = str.replace(/#size#/g, String(size));
+  return str;
+};
+const Iconfont: React.FC<{ name: #names#; size?: number; color?: string | string[];className?: string;[x: string]: any; }> = memo(({ size = 16, name = '', color = '',className = '',...props }) => {
+  const [bg, setBg] = useState('');
+  const [rpxSize, setRpxSize] = useState('');
+
+  useEffect(() => {
+    setRpxSize(Taro.pxTransform(size));
+    if (svgMap[name]) {
+      setBg(generateBg(svgMap[name], color, parseInt(Taro.pxTransform(size))));
+    }
+  },[color, size, name]);
+
+  return bg ? <View  className={`${className} taro-iconfont`}  style={{ width: rpxSize, height: rpxSize, backgroundImage: bg }}  {...props} /> : <div />;
+});
+
+
+export default Iconfont;
