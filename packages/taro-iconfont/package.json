@@ -1,6 +1,6 @@
 {
   "name": "@qiuxc/taro-iconfont",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "将 iconfont 生成为 taro 组件",
   "keywords": [],
   "author": "qiuxchao",
