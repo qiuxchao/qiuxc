@@ -20,7 +20,8 @@
     "taro-iconfont": "./dist/index.cjs"
   },
   "scripts": {
-    "build": "unbuild"
+    "build": "unbuild",
+    "prepublishOnly": "unbuild"
   },
   "dependencies": {
     "axios": "^0.19.0",
