@@ -1,0 +1,6 @@
+import { defineConfig } from "@qiuxc/apifox-to-typescript";
+
+export default defineConfig({
+  serverUrl: "",
+  requestPath: "./../request/index",
+});
