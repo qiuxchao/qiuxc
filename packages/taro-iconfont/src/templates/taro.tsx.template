@@ -5,11 +5,13 @@ import { View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 
 import './index.scss';
+
 let svgMap: Record<string, string> = #svgMap#;
+
 const hex2rgb = function (hex:string) {
   let rgb: number[] = [];
-
   hex = hex.substr(1);
+
   if (hex.length === 3) {
     hex = hex.replace(/(.)/g, '$1$1');
   }
@@ -17,8 +19,10 @@ const hex2rgb = function (hex:string) {
     rgb.push(parseInt(color, 0x10));
     return color;
   });
+  
   return `rgb(${rgb.join(',')})`;
 };
+
 // 处理颜色
 const generateBg = (str: string, color: string | string[], size: number) => {
   if (color.length !== 0) {

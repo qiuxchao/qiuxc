@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 export const replaceSize = (content: string, size: number) => {
   return content.replace(/#size#/g, String(size));
 };
@@ -6,10 +7,10 @@ export const replaceNames = (content: string, names: string[]) => {
   return content.replace(/#names#/g, names.join(' | '));
 };
 
-export const replaceHexToRgb = (hex) => {
+export const replaceHexToRgb = hex => {
   const rgb: number[] = [];
 
-  //去除前缀 # 号
+  // 去除前缀 # 号
   hex = hex.substr(1);
 
   if (hex.length === 3) {

@@ -1,8 +1,9 @@
-import path from "path";
-import fs from "fs";
-import colors from "colors";
-import defaultConfig from "./iconfont.json";
-import minimist from "minimist";
+import colors from 'colors';
+import fs from 'fs';
+import minimist from 'minimist';
+import path from 'path';
+
+import defaultConfig from './iconfont.json';
 
 export interface Config {
   symbol_url: string;
@@ -20,9 +21,9 @@ export const getConfig = () => {
     return cacheConfig;
   }
   const args = minimist<{ config: string }>(process.argv.slice(2));
-  let configFilePath = "iconfont.json";
+  let configFilePath = 'iconfont.json';
 
-  if (args.config && typeof args.config === "string") {
+  if (args.config && typeof args.config === 'string') {
     configFilePath = args.config;
   }
 
@@ -30,30 +31,28 @@ export const getConfig = () => {
 
   if (!fs.existsSync(targetFile)) {
     console.warn(
-      colors.red(
-        `File "${configFilePath}" doesn't exist, did you forget to generate it?`
-      )
+      colors.red(`File "${configFilePath}" doesn't exist, did you forget to generate it?`),
     );
     process.exit(1);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const config = require(targetFile) as Config;
 
   if (!config.symbol_url || !/^(https?:)?\/\//.test(config.symbol_url)) {
-    console.warn(colors.red("You are required to provide symbol_url"));
+    console.warn(colors.red('You are required to provide symbol_url'));
     process.exit(1);
   }
 
-  if (config.symbol_url.indexOf("//") === 0) {
-    config.symbol_url = "http:" + config.symbol_url;
+  if (config.symbol_url.indexOf('//') === 0) {
+    config.symbol_url = 'http:' + config.symbol_url;
   }
-  if (config?.font_url?.indexOf("//") === 0) {
-    config.font_url = "http:" + config.font_url;
+  if (config?.font_url?.indexOf('//') === 0) {
+    config.font_url = 'http:' + config.font_url;
   }
 
   config.save_dir = config.save_dir || defaultConfig.save_dir;
-  config.default_icon_size =
-    config.default_icon_size || defaultConfig.default_icon_size;
+  config.default_icon_size = config.default_icon_size || defaultConfig.default_icon_size;
 
   cacheConfig = config;
 
