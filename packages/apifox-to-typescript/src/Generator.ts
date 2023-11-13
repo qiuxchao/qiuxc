@@ -18,6 +18,7 @@ type PathObjType = Record<string, Record<'get' | 'post', any>>;
 
 export class Generator {
   public pathObj: PathObjType = {};
+  public componentsSchemas: Record<string, any> = {};
   private typeCode = '';
   private methodCodes: Array<{
     code: string;
@@ -43,11 +44,15 @@ export class Generator {
       } else {
         throwError('接口文档格式错误');
       }
+      if (res?.data?.components?.schemas) {
+        this.componentsSchemas = res.data.components.schemas;
+      }
     }
   }
 
   public async generate() {
     const pathKeys = Object.keys(this.pathObj);
+
     await Promise.all(
       pathKeys
         .filter(p => p !== '/')
@@ -87,11 +92,15 @@ export class Generator {
             );
           } else {
             if (target?.[method]?.requestBody?.content?.['application/json']?.schema) {
-              requestSchema = target[method].requestBody.content['application/json'].schema;
+              requestSchema = this.handleRefs(
+                target[method].requestBody.content['application/json'].schema,
+              );
             }
           }
           if (target?.[method]?.responses?.['200']?.content?.['application/json']?.schema) {
-            responseSchema = target[method].responses['200'].content['application/json'].schema;
+            responseSchema = this.handleRefs(
+              target[method].responses['200'].content['application/json'].schema,
+            );
           }
           const reqType = await jsonSchemaToType(requestSchema, `${typeName}Request`);
           const resType = await jsonSchemaToType(responseSchema, `${typeName}Response`);
@@ -154,10 +163,11 @@ export class Generator {
 
   public async write() {
     // 写入类型文件
-    const prettyTypeContent = prettier.format(this.typeCode, {
-      ...(await getCachedPrettierOptions()),
-      filepath: this.outputTypePath,
-    });
+    // const prettyTypeContent = prettier.format(this.typeCode, {
+    //   ...(await getCachedPrettierOptions()),
+    //   filepath: this.outputTypePath,
+    // });
+    const prettyTypeContent = this.typeCode;
     const outputTypeContent = dedent`
     /* prettier-ignore-start */
     /* tslint:disable */
@@ -229,10 +239,11 @@ export class Generator {
     });
     indexContent += `\n\nexport { ${methodPaths.map(item => item.name).join(',')} };\n`;
 
-    const prettyIndexContent = prettier.format(indexContent, {
-      ...(await getCachedPrettierOptions()),
-      filepath: this.outputIndexPath,
-    });
+    // const prettyIndexContent = prettier.format(indexContent, {
+    //   ...(await getCachedPrettierOptions()),
+    //   filepath: this.outputIndexPath,
+    // });
+    const prettyIndexContent = indexContent;
     const outputIndexContent = dedent`
     /* prettier-ignore-start */
     /* tslint:disable */
@@ -247,5 +258,32 @@ export class Generator {
     /* prettier-ignore-end */
     `;
     await fs.outputFile(this.outputIndexPath, outputIndexContent);
+  }
+
+  // 递归处理refs
+  private handleRefs(schema: any = {}) {
+    if (!schema.type && !schema.$ref) return;
+    if (schema.type && schema.type === 'object') {
+      const keys = Object.keys(schema.properties);
+      keys.forEach(key => {
+        const target = schema.properties[key];
+        if (target.$ref) {
+          const ref = target.$ref.replace('#/components/schemas/', '');
+          const refSchema = this.componentsSchemas[ref];
+          delete target.$ref;
+          Object.assign(target, refSchema);
+        }
+        if (target.type === 'array') {
+          this.handleRefs(target.items);
+        }
+      });
+    }
+    if (schema.$ref) {
+      const ref = schema.$ref.replace('#/components/schemas/', '');
+      const refSchema = this.componentsSchemas[ref];
+      delete schema.$ref;
+      Object.assign(schema, refSchema);
+    }
+    return schema;
   }
 }

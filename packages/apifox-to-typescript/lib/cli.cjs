@@ -1,15 +1,15 @@
 'use strict';
 
-const vtils = require('vtils');
-const path = require('path');
-const jsonSchemaToTypescript = require('json-schema-to-typescript');
-const prettier = require('prettier');
-const fs = require('fs-extra');
-const esbuild = require('esbuild');
-const changeCase = require('change-case');
-const axios = require('axios');
-const ora = require('ora');
 const consola = require('consola');
+const fs = require('fs-extra');
+const ora = require('ora');
+const path = require('path');
+const vtils = require('vtils');
+const axios = require('axios');
+const changeCase = require('change-case');
+const prettier = require('prettier');
+const esbuild = require('esbuild');
+const jsonSchemaToTypescript = require('json-schema-to-typescript');
 
 function _interopDefaultCompat (e) { return e && typeof e === 'object' && 'default' in e ? e.default : e; }
 
@@ -25,14 +25,14 @@ function _interopNamespaceCompat(e) {
 	return n;
 }
 
-const path__default = /*#__PURE__*/_interopDefaultCompat(path);
-const prettier__default = /*#__PURE__*/_interopDefaultCompat(prettier);
+const consola__default = /*#__PURE__*/_interopDefaultCompat(consola);
 const fs__default = /*#__PURE__*/_interopDefaultCompat(fs);
 const fs__namespace = /*#__PURE__*/_interopNamespaceCompat(fs);
-const changeCase__namespace = /*#__PURE__*/_interopNamespaceCompat(changeCase);
-const axios__default = /*#__PURE__*/_interopDefaultCompat(axios);
 const ora__default = /*#__PURE__*/_interopDefaultCompat(ora);
-const consola__default = /*#__PURE__*/_interopDefaultCompat(consola);
+const path__default = /*#__PURE__*/_interopDefaultCompat(path);
+const axios__default = /*#__PURE__*/_interopDefaultCompat(axios);
+const changeCase__namespace = /*#__PURE__*/_interopNamespaceCompat(changeCase);
+const prettier__default = /*#__PURE__*/_interopDefaultCompat(prettier);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -86,19 +86,13 @@ function traverseJsonSchema(jsonSchema, cb, currentPath = []) {
     );
   }
   if (jsonSchema.oneOf) {
-    jsonSchema.oneOf.forEach(
-      (item) => traverseJsonSchema(item, cb, currentPath)
-    );
+    jsonSchema.oneOf.forEach((item) => traverseJsonSchema(item, cb, currentPath));
   }
   if (jsonSchema.anyOf) {
-    jsonSchema.anyOf.forEach(
-      (item) => traverseJsonSchema(item, cb, currentPath)
-    );
+    jsonSchema.anyOf.forEach((item) => traverseJsonSchema(item, cb, currentPath));
   }
   if (jsonSchema.allOf) {
-    jsonSchema.allOf.forEach(
-      (item) => traverseJsonSchema(item, cb, currentPath)
-    );
+    jsonSchema.allOf.forEach((item) => traverseJsonSchema(item, cb, currentPath));
   }
   return jsonSchema;
 }
@@ -107,10 +101,7 @@ function jsonSchemaToJSTTJsonSchema(jsonSchema, typeName) {
     delete jsonSchema.description;
   }
   return traverseJsonSchema(jsonSchema, (jsonSchema2, currentPath) => {
-    const refValue = (
-      // YApi 低版本不支持配置 title，可以在 description 里配置
-      jsonSchema2.title == null ? jsonSchema2.description : jsonSchema2.title
-    );
+    const refValue = jsonSchema2.title === null ? jsonSchema2.description : jsonSchema2.title;
     if (refValue?.startsWith("&")) {
       const typeRelativePath = refValue.substring(1);
       const typeAbsolutePath = toUnixPath(
@@ -208,9 +199,7 @@ async function getPrettierOptions() {
     endOfLine: "lf"
     // 使用LF作为行尾标识符
   };
-  const [prettierConfigPathErr, prettierConfigPath] = await vtils.run(
-    () => prettier__default.resolveConfigFile()
-  );
+  const [prettierConfigPathErr, prettierConfigPath] = await vtils.run(() => prettier__default.resolveConfigFile());
   if (prettierConfigPathErr || !prettierConfigPath) {
     return prettierOptions;
   }
@@ -305,11 +294,7 @@ async function loadModule(filepath, tempPath, isESM = true) {
   if (ext === ".ts" || ext === ".js" && !isESM) {
     const tsText = fs.readFileSync(filepath, "utf-8");
     const { code } = await transformWithEsbuild(tsText, filepath);
-    const tempFile = path__default.join(
-      process.cwd(),
-      tempPath,
-      filepath.replace(/\.(ts|js)$/, ".mjs")
-    );
+    const tempFile = path__default.join(process.cwd(), tempPath, filepath.replace(/\.(ts|js)$/, ".mjs"));
     const tempBasename = path__default.dirname(tempFile);
     fs.mkdirSync(tempBasename, { recursive: true });
     fs.writeFileSync(tempFile, code, "utf8");
@@ -334,6 +319,7 @@ var __publicField = (obj, key, value) => {
 class Generator {
   constructor(config, cwd) {
     __publicField(this, "pathObj", {});
+    __publicField(this, "componentsSchemas", {});
     __publicField(this, "typeCode", "");
     __publicField(this, "methodCodes", []);
     __publicField(this, "outputTypePath");
@@ -353,6 +339,9 @@ class Generator {
       } else {
         throwError("\u63A5\u53E3\u6587\u6863\u683C\u5F0F\u9519\u8BEF");
       }
+      if (res?.data?.components?.schemas) {
+        this.componentsSchemas = res.data.components.schemas;
+      }
     }
   }
   async generate() {
@@ -360,9 +349,7 @@ class Generator {
     await Promise.all(
       pathKeys.filter((p) => p !== "/").map(async (p) => {
         const target = this.pathObj[p];
-        const typeName = changeCase__namespace.pascalCase(
-          p.split("/").slice(1).join("-")
-        );
+        const typeName = changeCase__namespace.pascalCase(p.split("/").slice(1).join("-"));
         const isGet = !!target.get;
         const method = isGet ? "get" : "post";
         const parameters = target?.get?.parameters;
@@ -385,20 +372,18 @@ class Generator {
           );
         } else {
           if (target?.[method]?.requestBody?.content?.["application/json"]?.schema) {
-            requestSchema = target[method].requestBody.content["application/json"].schema;
+            requestSchema = this.handleRefs(
+              target[method].requestBody.content["application/json"].schema
+            );
           }
         }
         if (target?.[method]?.responses?.["200"]?.content?.["application/json"]?.schema) {
-          responseSchema = target[method].responses["200"].content["application/json"].schema;
+          responseSchema = this.handleRefs(
+            target[method].responses["200"].content["application/json"].schema
+          );
         }
-        const reqType = await jsonSchemaToType(
-          requestSchema,
-          `${typeName}Request`
-        );
-        const resType = await jsonSchemaToType(
-          responseSchema,
-          `${typeName}Response`
-        );
+        const reqType = await jsonSchemaToType(requestSchema, `${typeName}Request`);
+        const resType = await jsonSchemaToType(responseSchema, `${typeName}Response`);
         const title = target?.[method]?.summary ?? "";
         const url = target?.[method]?.["x-run-in-apifox"] ?? "";
         const reqTypeComment = genComment({
@@ -431,9 +416,7 @@ ${typeCode}`;
           process.cwd(),
           `api/${other.length > 0 ? `${changeCase__namespace.camelCase(modelPath)}Api.ts` : "indexApi.ts"}`
         );
-        const funcName = changeCase__namespace.camelCase(
-          other.length > 0 ? other.join("-") : modelPath
-        );
+        const funcName = changeCase__namespace.camelCase(other.length > 0 ? other.join("-") : modelPath);
         const funcComment = genComment({
           title,
           method,
@@ -456,10 +439,7 @@ ${typeCode}`;
     );
   }
   async write() {
-    const prettyTypeContent = prettier__default.format(this.typeCode, {
-      ...await getCachedPrettierOptions(),
-      filepath: this.outputTypePath
-    });
+    const prettyTypeContent = this.typeCode;
     const outputTypeContent = vtils.dedent`
     /* prettier-ignore-start */
     /* tslint:disable */
@@ -476,10 +456,7 @@ ${typeCode}`;
     /* prettier-ignore-end */
     `;
     await fs__default.outputFile(this.outputTypePath, outputTypeContent);
-    const groupedMethodCodes = vtils.groupBy(
-      this.methodCodes,
-      (item) => item.outputPath
-    );
+    const groupedMethodCodes = vtils.groupBy(this.methodCodes, (item) => item.outputPath);
     await Promise.all(
       Object.keys(groupedMethodCodes).map(async (outputPath) => {
         const methodCodes = groupedMethodCodes[outputPath];
@@ -516,14 +493,14 @@ ${typeCode}`;
         await fs__default.outputFile(outputPath, outputMethodContent);
       })
     );
-    const methodPaths = Object.keys(
-      groupedMethodCodes
-    ).map((outputPath) => {
-      return {
-        path: outputPath,
-        name: path__default.basename(outputPath, ".ts")
-      };
-    });
+    const methodPaths = Object.keys(groupedMethodCodes).map(
+      (outputPath) => {
+        return {
+          path: outputPath,
+          name: path__default.basename(outputPath, ".ts")
+        };
+      }
+    );
     let indexContent = "";
     methodPaths.forEach((item) => {
       indexContent += `import * as ${item.name} from './${item.name}';
@@ -533,10 +510,7 @@ ${typeCode}`;
 
 export { ${methodPaths.map((item) => item.name).join(",")} };
 `;
-    const prettyIndexContent = prettier__default.format(indexContent, {
-      ...await getCachedPrettierOptions(),
-      filepath: this.outputIndexPath
-    });
+    const prettyIndexContent = indexContent;
     const outputIndexContent = vtils.dedent`
     /* prettier-ignore-start */
     /* tslint:disable */
@@ -551,6 +525,33 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
     /* prettier-ignore-end */
     `;
     await fs__default.outputFile(this.outputIndexPath, outputIndexContent);
+  }
+  // 递归处理refs
+  handleRefs(schema = {}) {
+    if (!schema.type && !schema.$ref)
+      return;
+    if (schema.type && schema.type === "object") {
+      const keys = Object.keys(schema.properties);
+      keys.forEach((key) => {
+        const target = schema.properties[key];
+        if (target.$ref) {
+          const ref = target.$ref.replace("#/components/schemas/", "");
+          const refSchema = this.componentsSchemas[ref];
+          delete target.$ref;
+          Object.assign(target, refSchema);
+        }
+        if (target.type === "array") {
+          this.handleRefs(target.items);
+        }
+      });
+    }
+    if (schema.$ref) {
+      const ref = schema.$ref.replace("#/components/schemas/", "");
+      const refSchema = this.componentsSchemas[ref];
+      delete schema.$ref;
+      Object.assign(schema, refSchema);
+    }
+    return schema;
   }
 }
 
