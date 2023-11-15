@@ -30,8 +30,8 @@ export class Generator {
   private cwd: string;
 
   public constructor(config: Config, cwd: string) {
-    this.outputTypePath = path.resolve(cwd, 'api/typings.d.ts');
-    this.outputIndexPath = path.resolve(cwd, 'api/index.ts');
+    this.outputTypePath = path.resolve(cwd, `${config.apiDirPath ?? 'src/api'}/typings.d.ts`);
+    this.outputIndexPath = path.resolve(cwd, `${config.apiDirPath ?? 'src/api'}/index.ts`);
     this.config = config;
     this.cwd = cwd;
   }
@@ -133,8 +133,10 @@ export class Generator {
           // 生成方法
           const [_, modelPath, ...other] = p.split('/');
           const funcOutputFilePath = path.resolve(
-            process.cwd(),
-            `api/${other.length > 0 ? `${changeCase.camelCase(modelPath)}Api.ts` : 'indexApi.ts'}`,
+            this.cwd,
+            `${this.config.apiDirPath ?? 'src/api'}/${
+              other.length > 0 ? `${changeCase.camelCase(modelPath)}Api.ts` : 'indexApi.ts'
+            }`,
           );
           const funcName = changeCase.camelCase(other.length > 0 ? other.join('-') : modelPath);
           const funcComment = genComment({
@@ -149,7 +151,7 @@ export class Generator {
         export const ${
           isJavaScriptKeyword(funcName) ? `${funcName}Api` : funcName
         } = <R extends boolean = true>(
-            data: API.${typeName}Request,
+            ${this.handleEmptyReqData(`${typeName}Request`, reqType)}: API.${typeName}Request,
             options?: GetOptionsType<typeof request> & { returnData?: R }
           ) => request<GetResponseType<API.${typeName}Response, R>>('${p}', '${method.toUpperCase()}', data, options);
             `;
@@ -163,11 +165,10 @@ export class Generator {
 
   public async write() {
     // 写入类型文件
-    // const prettyTypeContent = prettier.format(this.typeCode, {
-    //   ...(await getCachedPrettierOptions()),
-    //   filepath: this.outputTypePath,
-    // });
-    const prettyTypeContent = this.typeCode;
+    const prettyTypeContent = prettier.format(this.typeCode, {
+      ...(await getCachedPrettierOptions()),
+      filepath: this.outputTypePath,
+    });
     const outputTypeContent = dedent`
     /* prettier-ignore-start */
     /* tslint:disable */
@@ -239,11 +240,10 @@ export class Generator {
     });
     indexContent += `\n\nexport { ${methodPaths.map(item => item.name).join(',')} };\n`;
 
-    // const prettyIndexContent = prettier.format(indexContent, {
-    //   ...(await getCachedPrettierOptions()),
-    //   filepath: this.outputIndexPath,
-    // });
-    const prettyIndexContent = indexContent;
+    const prettyIndexContent = prettier.format(indexContent, {
+      ...(await getCachedPrettierOptions()),
+      filepath: this.outputIndexPath,
+    });
     const outputIndexContent = dedent`
     /* prettier-ignore-start */
     /* tslint:disable */
@@ -285,5 +285,12 @@ export class Generator {
       Object.assign(schema, refSchema);
     }
     return schema;
+  }
+
+  // 处理请求为空的情况
+  private handleEmptyReqData(reqTypeName: string, reqType: string) {
+    const reg = new RegExp(`${reqTypeName} {}`);
+    const isEmpty = reg.test(reqType);
+    return `data${isEmpty ? '?' : ''}`;
   }
 }

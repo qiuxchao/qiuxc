@@ -302,8 +302,8 @@ class Generator {
     __publicField(this, "outputIndexPath");
     __publicField(this, "config");
     __publicField(this, "cwd");
-    this.outputTypePath = path.resolve(cwd, "api/typings.d.ts");
-    this.outputIndexPath = path.resolve(cwd, "api/index.ts");
+    this.outputTypePath = path.resolve(cwd, `${config.apiDirPath ?? "src/api"}/typings.d.ts`);
+    this.outputIndexPath = path.resolve(cwd, `${config.apiDirPath ?? "src/api"}/index.ts`);
     this.config = config;
     this.cwd = cwd;
   }
@@ -389,8 +389,8 @@ class Generator {
 ${typeCode}`;
         const [_, modelPath, ...other] = p.split("/");
         const funcOutputFilePath = path.resolve(
-          process.cwd(),
-          `api/${other.length > 0 ? `${changeCase.camelCase(modelPath)}Api.ts` : "indexApi.ts"}`
+          this.cwd,
+          `${this.config.apiDirPath ?? "src/api"}/${other.length > 0 ? `${changeCase.camelCase(modelPath)}Api.ts` : "indexApi.ts"}`
         );
         const funcName = changeCase.camelCase(other.length > 0 ? other.join("-") : modelPath);
         const funcComment = genComment({
@@ -403,7 +403,7 @@ ${typeCode}`;
         const methodCode = dedent`
         ${funcComment}
         export const ${isJavaScriptKeyword(funcName) ? `${funcName}Api` : funcName} = <R extends boolean = true>(
-            data: API.${typeName}Request,
+            ${this.handleEmptyReqData(`${typeName}Request`, reqType)}: API.${typeName}Request,
             options?: GetOptionsType<typeof request> & { returnData?: R }
           ) => request<GetResponseType<API.${typeName}Response, R>>('${p}', '${method.toUpperCase()}', data, options);
             `;
@@ -415,7 +415,10 @@ ${typeCode}`;
     );
   }
   async write() {
-    const prettyTypeContent = this.typeCode;
+    const prettyTypeContent = prettier.format(this.typeCode, {
+      ...await getCachedPrettierOptions(),
+      filepath: this.outputTypePath
+    });
     const outputTypeContent = dedent`
     /* prettier-ignore-start */
     /* tslint:disable */
@@ -495,7 +498,10 @@ type GetOptionsType<T> = T extends (
 
 export { ${methodPaths.map((item) => item.name).join(",")} };
 `;
-    const prettyIndexContent = indexContent;
+    const prettyIndexContent = prettier.format(indexContent, {
+      ...await getCachedPrettierOptions(),
+      filepath: this.outputIndexPath
+    });
     const outputIndexContent = dedent`
     /* prettier-ignore-start */
     /* tslint:disable */
@@ -537,6 +543,12 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
       Object.assign(schema, refSchema);
     }
     return schema;
+  }
+  // 处理请求为空的情况
+  handleEmptyReqData(reqTypeName, reqType) {
+    const reg = new RegExp(`${reqTypeName} {}`);
+    const isEmpty = reg.test(reqType);
+    return `data${isEmpty ? "?" : ""}`;
   }
 }
 
