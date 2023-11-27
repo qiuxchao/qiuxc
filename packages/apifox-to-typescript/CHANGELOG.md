@@ -1,5 +1,11 @@
 # @qiuxc/apifox-to-typescript
 
+## 0.4.0
+
+### Minor Changes
+
+- f57193c: 支持嵌套的 refs
+
 ## 0.3.0
 
 ### Minor Changes
