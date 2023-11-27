@@ -45,7 +45,11 @@ export class Generator {
         throwError('接口文档格式错误');
       }
       if (res?.data?.components?.schemas) {
-        this.componentsSchemas = res.data.components.schemas;
+        const schemas = res.data.components.schemas;
+        Object.keys(schemas).forEach(key => {
+          schemas[key] = this.handleRefs(schemas[key], schemas);
+        });
+        this.componentsSchemas = schemas;
       }
     }
   }
@@ -128,6 +132,7 @@ export class Generator {
         ${resType}
 
         `;
+
           this.typeCode += `\n\n${typeCode}`;
 
           // 生成方法
@@ -261,7 +266,7 @@ export class Generator {
   }
 
   // 递归处理refs
-  private handleRefs(schema: any = {}) {
+  private handleRefs(schema: any = {}, componentsSchemas?: Record<string, any>) {
     if (!schema.type && !schema.$ref) return;
     if (schema.type && schema.type === 'object') {
       const keys = Object.keys(schema.properties);
@@ -269,14 +274,22 @@ export class Generator {
         const target = schema.properties[key];
         if (target.$ref) {
           const ref = target.$ref.replace('#/components/schemas/', '');
-          const refSchema = this.componentsSchemas[ref];
+          const refSchema = (componentsSchemas || this.componentsSchemas)[ref];
           delete target.$ref;
           Object.assign(target, refSchema);
         }
         if (target.type === 'array') {
           this.handleRefs(target.items);
         }
+        if (target.type === 'object') {
+          Object.keys(target.properties).forEach(subKey => {
+            target.properties[subKey] = this.handleRefs(target.properties[subKey]);
+          });
+        }
       });
+    }
+    if (schema.type === 'array') {
+      this.handleRefs(schema.items);
     }
     if (schema.$ref) {
       const ref = schema.$ref.replace('#/components/schemas/', '');

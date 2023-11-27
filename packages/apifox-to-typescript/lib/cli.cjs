@@ -340,7 +340,11 @@ class Generator {
         throwError("\u63A5\u53E3\u6587\u6863\u683C\u5F0F\u9519\u8BEF");
       }
       if (res?.data?.components?.schemas) {
-        this.componentsSchemas = res.data.components.schemas;
+        const schemas = res.data.components.schemas;
+        Object.keys(schemas).forEach((key) => {
+          schemas[key] = this.handleRefs(schemas[key], schemas);
+        });
+        this.componentsSchemas = schemas;
       }
     }
   }
@@ -533,7 +537,7 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
     await fs__default.outputFile(this.outputIndexPath, outputIndexContent);
   }
   // 递归处理refs
-  handleRefs(schema = {}) {
+  handleRefs(schema = {}, componentsSchemas) {
     if (!schema.type && !schema.$ref)
       return;
     if (schema.type && schema.type === "object") {
@@ -542,14 +546,22 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
         const target = schema.properties[key];
         if (target.$ref) {
           const ref = target.$ref.replace("#/components/schemas/", "");
-          const refSchema = this.componentsSchemas[ref];
+          const refSchema = (componentsSchemas || this.componentsSchemas)[ref];
           delete target.$ref;
           Object.assign(target, refSchema);
         }
         if (target.type === "array") {
           this.handleRefs(target.items);
         }
+        if (target.type === "object") {
+          Object.keys(target.properties).forEach((subKey) => {
+            target.properties[subKey] = this.handleRefs(target.properties[subKey]);
+          });
+        }
       });
+    }
+    if (schema.type === "array") {
+      this.handleRefs(schema.items);
     }
     if (schema.$ref) {
       const ref = schema.$ref.replace("#/components/schemas/", "");
