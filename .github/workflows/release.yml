@@ -23,15 +23,15 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Setup pnpm 8
+      - name: Setup pnpm 10
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 8
+          version: 10.15.1
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
 
       - name: Install Dependencies
         run: pnpm i
