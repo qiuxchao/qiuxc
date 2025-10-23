@@ -23,6 +23,9 @@
   ],
   "author": "qiuxchao",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
     "@types/node": "^20.8.10",
