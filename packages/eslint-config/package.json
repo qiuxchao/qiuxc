@@ -92,7 +92,7 @@
     "tsx": "^3.12.7"
   },
   "peerDependencies": {
-    "@qiuxc/eslint-plugin": "latest",
+    "@qiuxc/eslint-plugin": "workspace:*",
     "eslint-plugin-vue": ">=9.0.0",
     "typescript": "4.x || 5.x",
     "vue-eslint-parser": ">=9.0.0",
