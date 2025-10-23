@@ -34,6 +34,7 @@
     "axios": "^1.4.0",
     "change-case": "^3.0.2",
     "consola": "^2.3.0",
+    "dayjs": "^1.11.18",
     "esbuild": "^0.19.2",
     "fs-extra": "^7.0.1",
     "json-schema-to-typescript": "^10.1.4",

@@ -24,4 +24,5 @@ interface Config {
  */
 declare const defineConfig: (config: Config) => Config;
 
-export { type Config, defineConfig };
+export { defineConfig };
+export type { Config };

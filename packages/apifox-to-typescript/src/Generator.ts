@@ -267,36 +267,66 @@ export class Generator {
 
   // 递归处理refs
   private handleRefs(schema: any = {}, componentsSchemas?: Record<string, any>) {
-    if (!schema.type && !schema.$ref) return;
-    if (schema.type && schema.type === 'object') {
-      const keys = Object.keys(schema.properties);
-      keys.forEach(key => {
-        const target = schema.properties[key];
-        if (target.$ref) {
-          const ref = target.$ref.replace('#/components/schemas/', '');
+    if (!schema || typeof schema !== 'object') return schema;
+    
+    // 处理x-apifox-refs中的引用
+    if (schema['x-apifox-refs']) {
+      Object.keys(schema['x-apifox-refs']).forEach(key => {
+        const refObj = schema['x-apifox-refs'][key];
+        if (refObj.$ref) {
+          const ref = refObj.$ref.replace('#/components/schemas/', '');
           const refSchema = (componentsSchemas || this.componentsSchemas)[ref];
-          delete target.$ref;
-          Object.assign(target, refSchema);
-        }
-        if (target.type === 'array') {
-          this.handleRefs(target.items);
-        }
-        if (target.type === 'object') {
-          Object.keys(target.properties).forEach(subKey => {
-            target.properties[subKey] = this.handleRefs(target.properties[subKey]);
-          });
+          // 检查引用的组件是否存在
+          if (refSchema) {
+            // 将引用替换为实际的schema，并递归处理
+            schema['x-apifox-refs'][key] = this.handleRefs(refSchema, componentsSchemas);
+          } else {
+            // 如果引用不存在，删除这个引用
+            delete schema['x-apifox-refs'][key];
+          }
+        } else if (typeof refObj === 'object') {
+          // 对x-apifox-refs内部的对象也进行递归处理
+          schema['x-apifox-refs'][key] = this.handleRefs(refObj, componentsSchemas);
         }
       });
+      
+      // 如果x-apifox-refs为空，删除这个字段
+      if (Object.keys(schema['x-apifox-refs']).length === 0) {
+        delete schema['x-apifox-refs'];
+      }
     }
-    if (schema.type === 'array') {
-      this.handleRefs(schema.items);
-    }
+    
+    // 处理 $ref 引用
     if (schema.$ref) {
       const ref = schema.$ref.replace('#/components/schemas/', '');
       const refSchema = this.componentsSchemas[ref];
-      delete schema.$ref;
-      Object.assign(schema, refSchema);
+      // 检查引用的组件是否存在
+      if (refSchema) {
+        // 删除 $ref 属性，然后递归处理引用的schema
+        delete schema.$ref;
+        // 将引用的schema的属性合并到当前schema，并递归处理
+        const resolvedSchema = { ...refSchema };
+        return this.handleRefs(resolvedSchema, componentsSchemas);
+      }
+      return schema;
     }
+    
+    // 处理对象类型
+    if (schema.type && schema.type === 'object' && schema.properties) {
+      const keys = Object.keys(schema.properties);
+      keys.forEach(key => {
+        if (schema.properties[key]) {
+          // 递归处理每个属性
+          schema.properties[key] = this.handleRefs(schema.properties[key], componentsSchemas);
+        }
+      });
+    }
+    
+    // 处理数组类型
+    if (schema.type === 'array' && schema.items) {
+      schema.items = this.handleRefs(schema.items, componentsSchemas);
+    }
+    
     return schema;
   }
 
