@@ -1,5 +1,11 @@
 # @qiuxc/apifox-to-typescript
 
+## 0.5.0
+
+### Minor Changes
+
+- fcd5245: 修复 [Token "components" does not exist] 问题
+
 ## 0.4.0
 
 ### Minor Changes
