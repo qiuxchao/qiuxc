@@ -89,7 +89,7 @@
     "webpack-dev-server": "^4.13.1",
     "xml-escape": "^1.1.0",
     "qs": "^6.11.2",
-    "tsx": "^3.12.7"
+    "tsx": "^4.7.1"
   },
   "peerDependencies": {
     "@qiuxc/eslint-plugin": "workspace:*",
