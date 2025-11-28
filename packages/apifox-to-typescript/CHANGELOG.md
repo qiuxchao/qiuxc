@@ -1,5 +1,11 @@
 # @qiuxc/apifox-to-typescript
 
+## 0.6.0
+
+### Minor Changes
+
+- 75aa0a8: 去掉更新时间
+
 ## 0.5.0
 
 ### Minor Changes
