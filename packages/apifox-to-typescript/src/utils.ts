@@ -213,24 +213,23 @@ export const genComment = ({
   const summary: Array<
     | false
     | {
-        label: string;
-        value: string | string[];
-      }
+      label: string;
+      value: string | string[];
+    }
   > = [
-    {
-      label: '请求头',
-      value: `\`${method.toUpperCase()} ${path}\``,
-    },
-    {
-      label: '更新时间',
-      value: `\`${dayjs().format('YYYY-MM-DD HH:mm:ss')}\``,
-    },
-  ];
+      {
+        label: '请求头',
+        value: `\`${method.toUpperCase()} ${path}\``,
+      },
+      // {
+      //   label: '更新时间',
+      //   value: `\`${dayjs().format('YYYY-MM-DD HH:mm:ss')}\``,
+      // },
+    ];
   const description = url ? `[${escapedTitle}↗](${url})` : escapedTitle;
   const titleComment = dedent`
-  * ${type !== 'method' ? '接口 ' : ''}${description}${
-    type !== 'method' ? (type === 'requestType' ? ' 的 **请求类型**' : ' 的 **响应类型**') : ''
-  }
+  * ${type !== 'method' ? '接口 ' : ''}${description}${type !== 'method' ? (type === 'requestType' ? ' 的 **请求类型**' : ' 的 **响应类型**') : ''
+    }
   *
 `;
   const extraComment: string = summary
