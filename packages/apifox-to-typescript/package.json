@@ -1,6 +1,6 @@
 {
   "name": "@qiuxc/apifox-to-typescript",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "将 Apifox API 转换为 Typescript 请求代码",
   "main": "./lib/index.cjs",
   "types": "./lib/index.d.ts",
