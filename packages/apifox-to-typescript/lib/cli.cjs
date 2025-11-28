@@ -8,7 +8,6 @@ const vtils = require('vtils');
 const axios = require('axios');
 const changeCase = require('change-case');
 const prettier = require('prettier');
-const dayjs = require('dayjs');
 const esbuild = require('esbuild');
 const jsonSchemaToTypescript = require('json-schema-to-typescript');
 
@@ -34,7 +33,6 @@ const path__default = /*#__PURE__*/_interopDefaultCompat(path);
 const axios__default = /*#__PURE__*/_interopDefaultCompat(axios);
 const changeCase__namespace = /*#__PURE__*/_interopNamespaceCompat(changeCase);
 const prettier__default = /*#__PURE__*/_interopDefaultCompat(prettier);
-const dayjs__default = /*#__PURE__*/_interopDefaultCompat(dayjs);
 
 const JSTTOptions = {
   bannerComment: "",
@@ -146,11 +144,11 @@ const genComment = ({
     {
       label: "\u8BF7\u6C42\u5934",
       value: `\`${method.toUpperCase()} ${path2}\``
-    },
-    {
-      label: "\u66F4\u65B0\u65F6\u95F4",
-      value: `\`${dayjs__default().format("YYYY-MM-DD HH:mm:ss")}\``
     }
+    // {
+    //   label: '更新时间',
+    //   value: `\`${dayjs().format('YYYY-MM-DD HH:mm:ss')}\``,
+    // },
   ];
   const description = url ? `[${escapedTitle}\u2197](${url})` : escapedTitle;
   const titleComment = vtils.dedent`

@@ -7,7 +7,6 @@ import { memoize, run as run$1, isEmpty, cloneDeepFast, dedent, castArray, isObj
 import axios from 'axios';
 import * as changeCase from 'change-case';
 import prettier from 'prettier';
-import dayjs from 'dayjs';
 import { transform } from 'esbuild';
 import { compile } from 'json-schema-to-typescript';
 
@@ -130,11 +129,11 @@ const genComment = ({
     {
       label: "\u8BF7\u6C42\u5934",
       value: `\`${method.toUpperCase()} ${path2}\``
-    },
-    {
-      label: "\u66F4\u65B0\u65F6\u95F4",
-      value: `\`${dayjs().format("YYYY-MM-DD HH:mm:ss")}\``
     }
+    // {
+    //   label: '更新时间',
+    //   value: `\`${dayjs().format('YYYY-MM-DD HH:mm:ss')}\``,
+    // },
   ];
   const description = url ? `[${escapedTitle}\u2197](${url})` : escapedTitle;
   const titleComment = dedent`
