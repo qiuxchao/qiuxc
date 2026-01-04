@@ -1,5 +1,11 @@
 # @qiuxc/apifox-to-typescript
 
+## 0.8.0
+
+### Minor Changes
+
+- 858022d: 兼容 swagger
+
 ## 0.7.0
 
 ### Minor Changes
