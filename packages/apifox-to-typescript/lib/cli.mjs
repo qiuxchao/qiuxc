@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import consola from 'consola';
 import * as fs from 'fs-extra';
 import fs__default, { readFileSync, mkdirSync, writeFileSync } from 'fs-extra';
@@ -309,8 +310,8 @@ class Generator {
       } else {
         throwError("\u63A5\u53E3\u6587\u6863\u683C\u5F0F\u9519\u8BEF");
       }
-      if (res?.data?.components?.schemas) {
-        const schemas = res.data.components.schemas;
+      const schemas = res?.data?.components?.schemas || res?.data?.definitions || {};
+      if (schemas) {
         Object.keys(schemas).forEach((key) => {
           schemas[key] = this.handleRefs(schemas[key], schemas);
         });
@@ -326,7 +327,8 @@ class Generator {
         const typeName = changeCase.pascalCase(p.split("/").slice(1).join("-"));
         const isGet = !!target.get;
         const method = isGet ? "get" : "post";
-        const parameters = target?.get?.parameters;
+        const methodData = target[method];
+        const parameters = methodData?.parameters;
         let requestSchema = {
           type: "object",
           properties: {}
@@ -335,26 +337,38 @@ class Generator {
           type: "object",
           properties: {}
         };
-        if (isGet && parameters && Array.isArray(parameters)) {
-          parameters.forEach(
-            (item) => {
+        if (parameters && Array.isArray(parameters)) {
+          parameters.forEach((item) => {
+            if (item.in === "body" && item.schema) {
+              requestSchema = this.handleRefs(item.schema);
+            } else if (["query", "path", "header"].includes(item.in)) {
+              const schema = item.schema || { type: item.type };
               requestSchema.properties[item.name] = {
-                type: item.schema.type,
-                description: item.description
+                ...schema,
+                description: item.description || schema.description
               };
             }
-          );
-        } else {
-          if (target?.[method]?.requestBody?.content?.["application/json"]?.schema) {
-            requestSchema = this.handleRefs(
-              target[method].requestBody.content["application/json"].schema
-            );
+          });
+        }
+        if (methodData?.requestBody?.content) {
+          const content = methodData.requestBody.content["application/json"] || methodData.requestBody.content["*/*"] || Object.values(methodData.requestBody.content)[0];
+          if (content?.schema) {
+            requestSchema = this.handleRefs(content.schema);
           }
         }
-        if (target?.[method]?.responses?.["200"]?.content?.["application/json"]?.schema) {
-          responseSchema = this.handleRefs(
-            target[method].responses["200"].content["application/json"].schema
-          );
+        const responses = methodData?.responses;
+        if (responses) {
+          const successResponse = responses["200"] || responses["201"] || responses.default;
+          if (successResponse) {
+            if (successResponse.content) {
+              const content = successResponse.content["application/json"] || successResponse.content["*/*"] || Object.values(successResponse.content)[0];
+              if (content?.schema) {
+                responseSchema = this.handleRefs(content.schema);
+              }
+            } else if (successResponse.schema) {
+              responseSchema = this.handleRefs(successResponse.schema);
+            }
+          }
         }
         const reqType = await jsonSchemaToType(requestSchema, `${typeName}Request`);
         const resType = await jsonSchemaToType(responseSchema, `${typeName}Response`);
@@ -413,7 +427,7 @@ ${typeCode}`;
     );
   }
   async write() {
-    const prettyTypeContent = prettier.format(this.typeCode, {
+    const prettyTypeContent = await prettier.format(this.typeCode, {
       ...await getCachedPrettierOptions(),
       filepath: this.outputTypePath
     });
@@ -437,7 +451,7 @@ ${typeCode}`;
     await Promise.all(
       Object.keys(groupedMethodCodes).map(async (outputPath) => {
         const methodCodes = groupedMethodCodes[outputPath];
-        const prettyMethodContent = prettier.format(
+        const prettyMethodContent = await prettier.format(
           methodCodes.map((item) => item.code).join("\n\n"),
           {
             ...await getCachedPrettierOptions(),
@@ -487,7 +501,7 @@ ${typeCode}`;
 
 export { ${methodPaths.map((item) => item.name).join(",")} };
 `;
-    const prettyIndexContent = prettier.format(indexContent, {
+    const prettyIndexContent = await prettier.format(indexContent, {
       ...await getCachedPrettierOptions(),
       filepath: this.outputIndexPath
     });
@@ -530,8 +544,8 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
       }
     }
     if (schema.$ref) {
-      const ref = schema.$ref.replace("#/components/schemas/", "");
-      const refSchema = this.componentsSchemas[ref];
+      const ref = schema.$ref.replace("#/components/schemas/", "").replace("#/definitions/", "");
+      const refSchema = (componentsSchemas || this.componentsSchemas)[ref];
       if (refSchema) {
         delete schema.$ref;
         const resolvedSchema = { ...refSchema };

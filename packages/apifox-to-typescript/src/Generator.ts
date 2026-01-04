@@ -44,8 +44,9 @@ export class Generator {
       } else {
         throwError('接口文档格式错误');
       }
-      if (res?.data?.components?.schemas) {
-        const schemas = res.data.components.schemas;
+      
+      const schemas = res?.data?.components?.schemas || res?.data?.definitions || {};
+      if (schemas) {
         Object.keys(schemas).forEach(key => {
           schemas[key] = this.handleRefs(schemas[key], schemas);
         });
@@ -67,7 +68,8 @@ export class Generator {
           const typeName = changeCase.pascalCase(p.split('/').slice(1).join('-'));
           const isGet = !!target.get;
           const method = isGet ? 'get' : 'post';
-          const parameters = target?.get?.parameters;
+          const methodData = target[method];
+          const parameters = methodData?.parameters;
           let requestSchema: any = {
             type: 'object',
             properties: {},
@@ -76,35 +78,52 @@ export class Generator {
             type: 'object',
             properties: {},
           };
-          if (isGet && parameters && Array.isArray(parameters)) {
-            parameters.forEach(
-              (item: {
-                name: string;
-                in: string;
-                description: string;
-                required: boolean;
-                example: string;
-                schema: {
-                  type: string;
-                };
-              }) => {
+
+          // 处理请求参数
+          if (parameters && Array.isArray(parameters)) {
+            parameters.forEach((item: any) => {
+              if (item.in === 'body' && item.schema) {
+                // Swagger 2.0 body 参数
+                requestSchema = this.handleRefs(item.schema);
+              } else if (['query', 'path', 'header'].includes(item.in)) {
+                // 路径、查询或头参数
+                const schema = item.schema || { type: item.type };
                 requestSchema.properties[item.name] = {
-                  type: item.schema.type,
-                  description: item.description,
+                  ...schema,
+                  description: item.description || schema.description,
                 };
-              },
-            );
-          } else {
-            if (target?.[method]?.requestBody?.content?.['application/json']?.schema) {
-              requestSchema = this.handleRefs(
-                target[method].requestBody.content['application/json'].schema,
-              );
+              }
+            });
+          }
+
+          // 处理 OpenAPI 3.0 requestBody
+          if (methodData?.requestBody?.content) {
+            const content =
+              methodData.requestBody.content['application/json'] ||
+              methodData.requestBody.content['*/*'] ||
+              Object.values(methodData.requestBody.content)[0];
+            if ((content as any)?.schema) {
+              requestSchema = this.handleRefs((content as any).schema);
             }
           }
-          if (target?.[method]?.responses?.['200']?.content?.['application/json']?.schema) {
-            responseSchema = this.handleRefs(
-              target[method].responses['200'].content['application/json'].schema,
-            );
+
+          // 处理响应
+          const responses = methodData?.responses;
+          if (responses) {
+            const successResponse = responses['200'] || responses['201'] || responses.default;
+            if (successResponse) {
+              if (successResponse.content) {
+                const content =
+                  successResponse.content['application/json'] ||
+                  successResponse.content['*/*'] ||
+                  Object.values(successResponse.content)[0];
+                if (content?.schema) {
+                  responseSchema = this.handleRefs(content.schema);
+                }
+              } else if (successResponse.schema) {
+                responseSchema = this.handleRefs(successResponse.schema);
+              }
+            }
           }
           const reqType = await jsonSchemaToType(requestSchema, `${typeName}Request`);
           const resType = await jsonSchemaToType(responseSchema, `${typeName}Response`);
@@ -170,7 +189,7 @@ export class Generator {
 
   public async write() {
     // 写入类型文件
-    const prettyTypeContent = prettier.format(this.typeCode, {
+    const prettyTypeContent = await prettier.format(this.typeCode, {
       ...(await getCachedPrettierOptions()),
       filepath: this.outputTypePath,
     });
@@ -196,7 +215,7 @@ export class Generator {
     await Promise.all(
       Object.keys(groupedMethodCodes).map(async outputPath => {
         const methodCodes = groupedMethodCodes[outputPath];
-        const prettyMethodContent = prettier.format(
+        const prettyMethodContent = await prettier.format(
           methodCodes.map(item => item.code).join('\n\n'),
           {
             ...(await getCachedPrettierOptions()),
@@ -245,7 +264,7 @@ export class Generator {
     });
     indexContent += `\n\nexport { ${methodPaths.map(item => item.name).join(',')} };\n`;
 
-    const prettyIndexContent = prettier.format(indexContent, {
+    const prettyIndexContent = await prettier.format(indexContent, {
       ...(await getCachedPrettierOptions()),
       filepath: this.outputIndexPath,
     });
@@ -266,7 +285,7 @@ export class Generator {
   }
 
   // 递归处理refs
-  private handleRefs(schema: any = {}, componentsSchemas?: Record<string, any>) {
+  private handleRefs(schema: any = {}, componentsSchemas?: Record<string, any>): any {
     if (!schema || typeof schema !== 'object') return schema;
     
     // 处理x-apifox-refs中的引用
@@ -298,8 +317,8 @@ export class Generator {
     
     // 处理 $ref 引用
     if (schema.$ref) {
-      const ref = schema.$ref.replace('#/components/schemas/', '');
-      const refSchema = this.componentsSchemas[ref];
+      const ref = schema.$ref.replace('#/components/schemas/', '').replace('#/definitions/', '');
+      const refSchema = (componentsSchemas || this.componentsSchemas)[ref];
       // 检查引用的组件是否存在
       if (refSchema) {
         // 删除 $ref 属性，然后递归处理引用的schema

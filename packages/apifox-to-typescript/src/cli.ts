@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import consola from 'consola';
 import fs from 'fs-extra';
 import ora from 'ora';
