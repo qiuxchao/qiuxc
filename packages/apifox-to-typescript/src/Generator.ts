@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 import axios from 'axios';
 import * as changeCase from 'change-case';
 import fs from 'fs-extra';
@@ -44,7 +45,7 @@ export class Generator {
       } else {
         throwError('接口文档格式错误');
       }
-      
+
       const schemas = res?.data?.components?.schemas || res?.data?.definitions || {};
       if (schemas) {
         Object.keys(schemas).forEach(key => {
@@ -159,7 +160,9 @@ export class Generator {
           const funcOutputFilePath = path.resolve(
             this.cwd,
             `${this.config.apiDirPath ?? 'src/api'}/${
-              other.length > 0 ? `${changeCase.camelCase(modelPath)}Api.ts` : 'indexApi.ts'
+              other.length > 0
+                ? `${changeCase.camelCase(modelPath)}${this.config.apiFileSuffix ?? 'Api'}.ts`
+                : 'indexApi.ts'
             }`,
           );
           const funcName = changeCase.camelCase(other.length > 0 ? other.join('-') : modelPath);
@@ -234,7 +237,10 @@ export class Generator {
         ) => Promise<unknown>
         ? O
         : never;
-        type GetResponseType<T extends { data?: any }, R extends boolean> = R extends true ? T['data'] : T;
+        ${
+          this.config.getResponseTypeSnippet ??
+          `type GetResponseType<T extends { data?: any }, R extends boolean> = R extends true ? T['data'] : T;`
+        }
 
 
         /* 该文件工具自动生成，请勿直接修改！！！ */
@@ -287,7 +293,7 @@ export class Generator {
   // 递归处理refs
   private handleRefs(schema: any = {}, componentsSchemas?: Record<string, any>): any {
     if (!schema || typeof schema !== 'object') return schema;
-    
+
     // 处理x-apifox-refs中的引用
     if (schema['x-apifox-refs']) {
       Object.keys(schema['x-apifox-refs']).forEach(key => {
@@ -308,13 +314,13 @@ export class Generator {
           schema['x-apifox-refs'][key] = this.handleRefs(refObj, componentsSchemas);
         }
       });
-      
+
       // 如果x-apifox-refs为空，删除这个字段
       if (Object.keys(schema['x-apifox-refs']).length === 0) {
         delete schema['x-apifox-refs'];
       }
     }
-    
+
     // 处理 $ref 引用
     if (schema.$ref) {
       const ref = schema.$ref.replace('#/components/schemas/', '').replace('#/definitions/', '');
@@ -329,7 +335,7 @@ export class Generator {
       }
       return schema;
     }
-    
+
     // 处理对象类型
     if (schema.type && schema.type === 'object' && schema.properties) {
       const keys = Object.keys(schema.properties);
@@ -340,12 +346,12 @@ export class Generator {
         }
       });
     }
-    
+
     // 处理数组类型
     if (schema.type === 'array' && schema.items) {
       schema.items = this.handleRefs(schema.items, componentsSchemas);
     }
-    
+
     return schema;
   }
 

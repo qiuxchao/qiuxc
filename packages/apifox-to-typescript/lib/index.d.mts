@@ -15,6 +15,18 @@ interface Config {
      * @default 'src/api'
      */
     apiDirPath?: string;
+    /**
+     * 接口文件后缀
+     *
+     * @default 'Api'
+     */
+    apiFileSuffix?: string;
+    /**
+     * 响应类型代码片段
+     *
+     * @default type GetResponseType<T extends { data?: any }, R extends boolean> = R extends true ? T['data'] : T;
+     */
+    getResponseTypeSnippet?: string;
 }
 
 /**

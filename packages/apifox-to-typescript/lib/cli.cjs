@@ -417,7 +417,7 @@ ${typeCode}`;
         const [_, modelPath, ...other] = p.split("/");
         const funcOutputFilePath = path__default.resolve(
           this.cwd,
-          `${this.config.apiDirPath ?? "src/api"}/${other.length > 0 ? `${changeCase__namespace.camelCase(modelPath)}Api.ts` : "indexApi.ts"}`
+          `${this.config.apiDirPath ?? "src/api"}/${other.length > 0 ? `${changeCase__namespace.camelCase(modelPath)}${this.config.apiFileSuffix ?? "Api"}.ts` : "indexApi.ts"}`
         );
         const funcName = changeCase__namespace.camelCase(other.length > 0 ? other.join("-") : modelPath);
         const funcComment = genComment({
@@ -485,7 +485,7 @@ ${typeCode}`;
         ) => Promise<unknown>
         ? O
         : never;
-        type GetResponseType<T extends { data?: any }, R extends boolean> = R extends true ? T['data'] : T;
+        ${this.config.getResponseTypeSnippet ?? `type GetResponseType<T extends { data?: any }, R extends boolean> = R extends true ? T['data'] : T;`}
 
 
         /* 该文件工具自动生成，请勿直接修改！！！ */
