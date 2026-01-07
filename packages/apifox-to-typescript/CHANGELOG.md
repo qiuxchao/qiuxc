@@ -1,5 +1,11 @@
 # @qiuxc/apifox-to-typescript
 
+## 0.9.0
+
+### Minor Changes
+
+- 4379aad: add `apiFileSuffix` and `getResponseTypeSnippet` config field.
+
 ## 0.8.0
 
 ### Minor Changes
