@@ -1,5 +1,11 @@
 # @qiuxc/apifox-to-typescript
 
+## 0.10.0
+
+### Minor Changes
+
+- e081e18: fix att
+
 ## 0.9.0
 
 ### Minor Changes
