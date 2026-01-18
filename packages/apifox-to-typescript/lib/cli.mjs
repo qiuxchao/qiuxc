@@ -370,8 +370,22 @@ class Generator {
             }
           }
         }
-        const reqType = await jsonSchemaToType(requestSchema, `${typeName}Request`);
-        const resType = await jsonSchemaToType(responseSchema, `${typeName}Response`);
+        const reqType = await jsonSchemaToType(
+          {
+            ...requestSchema,
+            components: { schemas: this.componentsSchemas },
+            definitions: this.componentsSchemas
+          },
+          `${typeName}Request`
+        );
+        const resType = await jsonSchemaToType(
+          {
+            ...responseSchema,
+            components: { schemas: this.componentsSchemas },
+            definitions: this.componentsSchemas
+          },
+          `${typeName}Response`
+        );
         const title = target?.[method]?.summary ?? "";
         const url = target?.[method]?.["x-run-in-apifox"] ?? "";
         const reqTypeComment = genComment({
@@ -553,16 +567,21 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
       }
       return schema;
     }
-    if (schema.type && schema.type === "object" && schema.properties) {
-      const keys = Object.keys(schema.properties);
-      keys.forEach((key) => {
-        if (schema.properties[key]) {
-          schema.properties[key] = this.handleRefs(schema.properties[key], componentsSchemas);
-        }
+    if (schema.properties) {
+      Object.keys(schema.properties).forEach((key) => {
+        schema.properties[key] = this.handleRefs(schema.properties[key], componentsSchemas);
       });
     }
-    if (schema.type === "array" && schema.items) {
+    if (schema.items) {
       schema.items = this.handleRefs(schema.items, componentsSchemas);
+    }
+    ["allOf", "anyOf", "oneOf"].forEach((key) => {
+      if (Array.isArray(schema[key])) {
+        schema[key] = schema[key].map((item) => this.handleRefs(item, componentsSchemas));
+      }
+    });
+    if (schema.additionalProperties && typeof schema.additionalProperties === "object") {
+      schema.additionalProperties = this.handleRefs(schema.additionalProperties, componentsSchemas);
     }
     return schema;
   }

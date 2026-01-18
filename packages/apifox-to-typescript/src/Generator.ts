@@ -126,8 +126,22 @@ export class Generator {
               }
             }
           }
-          const reqType = await jsonSchemaToType(requestSchema, `${typeName}Request`);
-          const resType = await jsonSchemaToType(responseSchema, `${typeName}Response`);
+          const reqType = await jsonSchemaToType(
+            {
+              ...requestSchema,
+              components: { schemas: this.componentsSchemas },
+              definitions: this.componentsSchemas,
+            },
+            `${typeName}Request`,
+          );
+          const resType = await jsonSchemaToType(
+            {
+              ...responseSchema,
+              components: { schemas: this.componentsSchemas },
+              definitions: this.componentsSchemas,
+            },
+            `${typeName}Response`,
+          );
           const title = target?.[method]?.summary ?? '';
           const url = target?.[method]?.['x-run-in-apifox'] ?? '';
           const reqTypeComment = genComment({
@@ -159,10 +173,9 @@ export class Generator {
           const [_, modelPath, ...other] = p.split('/');
           const funcOutputFilePath = path.resolve(
             this.cwd,
-            `${this.config.apiDirPath ?? 'src/api'}/${
-              other.length > 0
-                ? `${changeCase.camelCase(modelPath)}${this.config.apiFileSuffix ?? 'Api'}.ts`
-                : 'indexApi.ts'
+            `${this.config.apiDirPath ?? 'src/api'}/${other.length > 0
+              ? `${changeCase.camelCase(modelPath)}${this.config.apiFileSuffix ?? 'Api'}.ts`
+              : 'indexApi.ts'
             }`,
           );
           const funcName = changeCase.camelCase(other.length > 0 ? other.join('-') : modelPath);
@@ -175,9 +188,8 @@ export class Generator {
           });
           const methodCode = dedent`
         ${funcComment}
-        export const ${
-          isJavaScriptKeyword(funcName) ? `${funcName}Api` : funcName
-        } = <R extends boolean = true>(
+        export const ${isJavaScriptKeyword(funcName) ? `${funcName}Api` : funcName
+            } = <R extends boolean = true>(
             ${this.handleEmptyReqData(`${typeName}Request`, reqType)}: API.${typeName}Request,
             options?: GetOptionsType<typeof request> & { returnData?: R }
           ) => request<GetResponseType<API.${typeName}Response, R>>('${p}', '${method.toUpperCase()}', data, options);
@@ -237,10 +249,9 @@ export class Generator {
         ) => Promise<unknown>
         ? O
         : never;
-        ${
-          this.config.getResponseTypeSnippet ??
+        ${this.config.getResponseTypeSnippet ??
           `type GetResponseType<T extends { data?: any }, R extends boolean> = R extends true ? T['data'] : T;`
-        }
+          }
 
 
         /* 该文件工具自动生成，请勿直接修改！！！ */
@@ -337,19 +348,27 @@ export class Generator {
     }
 
     // 处理对象类型
-    if (schema.type && schema.type === 'object' && schema.properties) {
-      const keys = Object.keys(schema.properties);
-      keys.forEach(key => {
-        if (schema.properties[key]) {
-          // 递归处理每个属性
-          schema.properties[key] = this.handleRefs(schema.properties[key], componentsSchemas);
-        }
+    if (schema.properties) {
+      Object.keys(schema.properties).forEach(key => {
+        schema.properties[key] = this.handleRefs(schema.properties[key], componentsSchemas);
       });
     }
 
     // 处理数组类型
-    if (schema.type === 'array' && schema.items) {
+    if (schema.items) {
       schema.items = this.handleRefs(schema.items, componentsSchemas);
+    }
+
+    // 处理组合类型
+    ['allOf', 'anyOf', 'oneOf'].forEach(key => {
+      if (Array.isArray(schema[key])) {
+        schema[key] = schema[key].map((item: any) => this.handleRefs(item, componentsSchemas));
+      }
+    });
+
+    // 处理 additionalProperties
+    if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
+      schema.additionalProperties = this.handleRefs(schema.additionalProperties, componentsSchemas);
     }
 
     return schema;
