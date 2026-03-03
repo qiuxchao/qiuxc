@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-import consola from 'consola';
 import * as fs from 'fs-extra';
 import fs__default, { readFileSync, mkdirSync, writeFileSync } from 'fs-extra';
 import ora from 'ora';
 import path from 'path';
 import { memoize, run as run$1, isEmpty, cloneDeepFast, dedent, castArray, isObject, isArray, forOwn, groupBy, wait } from 'vtils';
 import axios from 'axios';
-import * as changeCase from 'change-case';
+import { pascalCase, camelCase } from 'change-case';
 import prettier from 'prettier';
 import { transform } from 'esbuild';
 import { compile } from 'json-schema-to-typescript';
+import { pathToFileURL } from 'url';
 
 
 
@@ -36,8 +36,7 @@ function toUnixPath(path2) {
   return path2.replace(/[/\\]+/g, "/");
 }
 function traverseJsonSchema(jsonSchema, cb, currentPath = []) {
-  if (!isObject(jsonSchema))
-    return jsonSchema;
+  if (!isObject(jsonSchema)) return jsonSchema;
   if (isArray(jsonSchema.properties)) {
     jsonSchema.properties = jsonSchema.properties.reduce((props, js) => {
       props[js.name] = js;
@@ -256,7 +255,8 @@ const transformWithEsbuild = async (code, filename) => {
   return result;
 };
 async function loadESModule(filepath) {
-  const handle = await import(`${filepath}?${Date.now()}`);
+  const url = pathToFileURL(filepath).href;
+  const handle = await import(`${url}?${Date.now()}`);
   return handle.default;
 }
 async function loadModule(filepath, tempPath, isESM = true) {
@@ -265,7 +265,11 @@ async function loadModule(filepath, tempPath, isESM = true) {
   if (ext === ".ts" || ext === ".js" && !isESM) {
     const tsText = readFileSync(filepath, "utf-8");
     const { code } = await transformWithEsbuild(tsText, filepath);
-    const tempFile = path.join(process.cwd(), tempPath, filepath.replace(/\.(ts|js)$/, ".mjs"));
+    const tempFile = path.join(
+      process.cwd(),
+      tempPath,
+      path.basename(filepath).replace(/\.(ts|js)$/, ".mjs")
+    );
     const tempBasename = path.dirname(tempFile);
     mkdirSync(tempBasename, { recursive: true });
     writeFileSync(tempFile, code, "utf8");
@@ -281,22 +285,16 @@ const throwError = (...msg) => {
   throw new Error(msg.join(""));
 };
 
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 class Generator {
+  pathObj = {};
+  componentsSchemas = {};
+  typeCode = "";
+  methodCodes = [];
+  outputTypePath;
+  outputIndexPath;
+  config;
+  cwd;
   constructor(config, cwd) {
-    __publicField(this, "pathObj", {});
-    __publicField(this, "componentsSchemas", {});
-    __publicField(this, "typeCode", "");
-    __publicField(this, "methodCodes", []);
-    __publicField(this, "outputTypePath");
-    __publicField(this, "outputIndexPath");
-    __publicField(this, "config");
-    __publicField(this, "cwd");
     this.outputTypePath = path.resolve(cwd, `${config.apiDirPath ?? "src/api"}/typings.d.ts`);
     this.outputIndexPath = path.resolve(cwd, `${config.apiDirPath ?? "src/api"}/index.ts`);
     this.config = config;
@@ -324,7 +322,7 @@ class Generator {
     await Promise.all(
       pathKeys.filter((p) => p !== "/").map(async (p) => {
         const target = this.pathObj[p];
-        const typeName = changeCase.pascalCase(p.split("/").slice(1).join("-"));
+        const typeName = pascalCase(p.split("/").slice(1).join("-"));
         const isGet = !!target.get;
         const method = isGet ? "get" : "post";
         const methodData = target[method];
@@ -416,9 +414,9 @@ ${typeCode}`;
         const [_, modelPath, ...other] = p.split("/");
         const funcOutputFilePath = path.resolve(
           this.cwd,
-          `${this.config.apiDirPath ?? "src/api"}/${other.length > 0 ? `${changeCase.camelCase(modelPath)}${this.config.apiFileSuffix ?? "Api"}.ts` : "indexApi.ts"}`
+          `${this.config.apiDirPath ?? "src/api"}/${other.length > 0 ? `${camelCase(modelPath)}${this.config.apiFileSuffix ?? "Api"}.ts` : "indexApi.ts"}`
         );
-        const funcName = changeCase.camelCase(other.length > 0 ? other.join("-") : modelPath);
+        const funcName = camelCase(other.length > 0 ? other.join("-") : modelPath);
         const funcComment = genComment({
           title,
           method,
@@ -536,8 +534,7 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
   }
   // 递归处理refs
   handleRefs(schema = {}, componentsSchemas) {
-    if (!schema || typeof schema !== "object")
-      return schema;
+    if (!schema || typeof schema !== "object") return schema;
     if (schema["x-apifox-refs"]) {
       Object.keys(schema["x-apifox-refs"]).forEach((key) => {
         const refObj = schema["x-apifox-refs"][key];
@@ -593,17 +590,27 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
   }
 }
 
+const logger$1 = {
+  success: (msg) => console.log(`\x1B[32m\u2714\x1B[0m ${msg}`),
+  warn: (msg) => console.warn(`\x1B[33m\u26A0\x1B[0m ${msg}`)
+};
 function init(cwd) {
   const configPath = path.resolve(cwd, `att.config.ts`);
   if (fs.existsSync(configPath)) {
-    consola.warn(`\u914D\u7F6E\u6587\u4EF6\u5DF2\u5B58\u5728: ${configPath}`);
+    logger$1.warn(`\u914D\u7F6E\u6587\u4EF6\u5DF2\u5B58\u5728: ${configPath}`);
     return;
   }
   const templatePath = path.resolve(__dirname, `./config.template`);
   fs.copyFileSync(templatePath, configPath);
-  consola.success(`\u914D\u7F6E\u6587\u4EF6\u5DF2\u751F\u6210: ${configPath}`);
+  logger$1.success(`\u914D\u7F6E\u6587\u4EF6\u5DF2\u751F\u6210: ${configPath}`);
 }
 
+const logger = {
+  success: (msg) => console.log(`\x1B[32m\u2714\x1B[0m ${msg}`),
+  error: (msg) => console.error(`\x1B[31m\u2716\x1B[0m`, msg),
+  info: (msg) => console.log(`\x1B[34m\u2139\x1B[0m ${msg}`),
+  warn: (msg) => console.warn(`\x1B[33m\u26A0\x1B[0m ${msg}`)
+};
 const att = async (config, cwd) => {
   const generator = new Generator(config, cwd);
   const spinner = ora("\u6B63\u5728\u83B7\u53D6\u63A5\u53E3\u6570\u636E...").start();
@@ -619,19 +626,26 @@ const att = async (config, cwd) => {
     await generator.write();
     delayNotice.cancel();
     spinner.stop();
-    consola.success("\u5199\u5165\u6587\u4EF6\u5B8C\u6BD5");
+    logger.success("\u5199\u5165\u6587\u4EF6\u5B8C\u6BD5");
   } catch (err) {
     spinner?.stop();
-    consola.error(err);
+    if (err?.isAxiosError) {
+      logger.error(`\u8BF7\u6C42\u63A5\u53E3\u5931\u8D25: ${err.message}${err.response ? ` (${err.response.status})` : ""}`);
+      if (err.code === "ECONNREFUSED" || err.code === "ENOTFOUND" || err.code === "ERR_NETWORK") {
+        logger.info("\u8BF7\u68C0\u67E5 serverUrl \u662F\u5426\u6B63\u786E\uFF0C\u4EE5\u53CA\u63A5\u53E3\u670D\u52A1\u662F\u5426\u5DF2\u542F\u52A8");
+      }
+    } else {
+      logger.error(err);
+    }
   }
 };
 const run = async (cwd) => {
   const configFile = path.join(cwd, "att.config.ts");
   const configFileExist = await fs__default.pathExists(configFile);
   if (!configFileExist) {
-    return consola.error(`\u627E\u4E0D\u5230\u914D\u7F6E\u6587\u4EF6: ${configFile}`);
+    return logger.error(`\u627E\u4E0D\u5230\u914D\u7F6E\u6587\u4EF6: ${configFile}`);
   }
-  consola.success(`\u627E\u5230\u914D\u7F6E\u6587\u4EF6: ${configFile}`);
+  logger.info(`\u627E\u5230\u914D\u7F6E\u6587\u4EF6: ${configFile}`);
   const packageJson = await fs__default.readJSON(path.resolve(cwd, "package.json"));
   const isESM = packageJson.type === "module";
   const { content: config } = await loadModule(

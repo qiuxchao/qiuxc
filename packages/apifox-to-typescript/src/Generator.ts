@@ -1,6 +1,6 @@
 /* eslint-disable max-depth */
 import axios from 'axios';
-import * as changeCase from 'change-case';
+import { camelCase, pascalCase } from 'change-case';
 import fs from 'fs-extra';
 import path from 'path';
 import prettier from 'prettier';
@@ -66,7 +66,7 @@ export class Generator {
           const target = this.pathObj[p];
 
           // 生成类型
-          const typeName = changeCase.pascalCase(p.split('/').slice(1).join('-'));
+          const typeName = pascalCase(p.split('/').slice(1).join('-'));
           const isGet = !!target.get;
           const method = isGet ? 'get' : 'post';
           const methodData = target[method];
@@ -174,11 +174,11 @@ export class Generator {
           const funcOutputFilePath = path.resolve(
             this.cwd,
             `${this.config.apiDirPath ?? 'src/api'}/${other.length > 0
-              ? `${changeCase.camelCase(modelPath)}${this.config.apiFileSuffix ?? 'Api'}.ts`
+              ? `${camelCase(modelPath)}${this.config.apiFileSuffix ?? 'Api'}.ts`
               : 'indexApi.ts'
             }`,
           );
-          const funcName = changeCase.camelCase(other.length > 0 ? other.join('-') : modelPath);
+          const funcName = camelCase(other.length > 0 ? other.join('-') : modelPath);
           const funcComment = genComment({
             title,
             method,

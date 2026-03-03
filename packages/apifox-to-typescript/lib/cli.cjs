@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 'use strict';
 
-const consola = require('consola');
 const fs = require('fs-extra');
 const ora = require('ora');
 const path = require('path');
@@ -11,6 +10,7 @@ const changeCase = require('change-case');
 const prettier = require('prettier');
 const esbuild = require('esbuild');
 const jsonSchemaToTypescript = require('json-schema-to-typescript');
+const url = require('url');
 
 function _interopDefaultCompat (e) { return e && typeof e === 'object' && 'default' in e ? e.default : e; }
 
@@ -26,13 +26,11 @@ function _interopNamespaceCompat(e) {
   return n;
 }
 
-const consola__default = /*#__PURE__*/_interopDefaultCompat(consola);
 const fs__default = /*#__PURE__*/_interopDefaultCompat(fs);
 const fs__namespace = /*#__PURE__*/_interopNamespaceCompat(fs);
 const ora__default = /*#__PURE__*/_interopDefaultCompat(ora);
 const path__default = /*#__PURE__*/_interopDefaultCompat(path);
 const axios__default = /*#__PURE__*/_interopDefaultCompat(axios);
-const changeCase__namespace = /*#__PURE__*/_interopNamespaceCompat(changeCase);
 const prettier__default = /*#__PURE__*/_interopDefaultCompat(prettier);
 
 const JSTTOptions = {
@@ -51,8 +49,7 @@ function toUnixPath(path2) {
   return path2.replace(/[/\\]+/g, "/");
 }
 function traverseJsonSchema(jsonSchema, cb, currentPath = []) {
-  if (!vtils.isObject(jsonSchema))
-    return jsonSchema;
+  if (!vtils.isObject(jsonSchema)) return jsonSchema;
   if (vtils.isArray(jsonSchema.properties)) {
     jsonSchema.properties = jsonSchema.properties.reduce((props, js) => {
       props[js.name] = js;
@@ -271,7 +268,8 @@ const transformWithEsbuild = async (code, filename) => {
   return result;
 };
 async function loadESModule(filepath) {
-  const handle = await import(`${filepath}?${Date.now()}`);
+  const url$1 = url.pathToFileURL(filepath).href;
+  const handle = await import(`${url$1}?${Date.now()}`);
   return handle.default;
 }
 async function loadModule(filepath, tempPath, isESM = true) {
@@ -280,7 +278,11 @@ async function loadModule(filepath, tempPath, isESM = true) {
   if (ext === ".ts" || ext === ".js" && !isESM) {
     const tsText = fs.readFileSync(filepath, "utf-8");
     const { code } = await transformWithEsbuild(tsText, filepath);
-    const tempFile = path__default.join(process.cwd(), tempPath, filepath.replace(/\.(ts|js)$/, ".mjs"));
+    const tempFile = path__default.join(
+      process.cwd(),
+      tempPath,
+      path__default.basename(filepath).replace(/\.(ts|js)$/, ".mjs")
+    );
     const tempBasename = path__default.dirname(tempFile);
     fs.mkdirSync(tempBasename, { recursive: true });
     fs.writeFileSync(tempFile, code, "utf8");
@@ -296,22 +298,16 @@ const throwError = (...msg) => {
   throw new Error(msg.join(""));
 };
 
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 class Generator {
+  pathObj = {};
+  componentsSchemas = {};
+  typeCode = "";
+  methodCodes = [];
+  outputTypePath;
+  outputIndexPath;
+  config;
+  cwd;
   constructor(config, cwd) {
-    __publicField(this, "pathObj", {});
-    __publicField(this, "componentsSchemas", {});
-    __publicField(this, "typeCode", "");
-    __publicField(this, "methodCodes", []);
-    __publicField(this, "outputTypePath");
-    __publicField(this, "outputIndexPath");
-    __publicField(this, "config");
-    __publicField(this, "cwd");
     this.outputTypePath = path__default.resolve(cwd, `${config.apiDirPath ?? "src/api"}/typings.d.ts`);
     this.outputIndexPath = path__default.resolve(cwd, `${config.apiDirPath ?? "src/api"}/index.ts`);
     this.config = config;
@@ -339,7 +335,7 @@ class Generator {
     await Promise.all(
       pathKeys.filter((p) => p !== "/").map(async (p) => {
         const target = this.pathObj[p];
-        const typeName = changeCase__namespace.pascalCase(p.split("/").slice(1).join("-"));
+        const typeName = changeCase.pascalCase(p.split("/").slice(1).join("-"));
         const isGet = !!target.get;
         const method = isGet ? "get" : "post";
         const methodData = target[method];
@@ -431,9 +427,9 @@ ${typeCode}`;
         const [_, modelPath, ...other] = p.split("/");
         const funcOutputFilePath = path__default.resolve(
           this.cwd,
-          `${this.config.apiDirPath ?? "src/api"}/${other.length > 0 ? `${changeCase__namespace.camelCase(modelPath)}${this.config.apiFileSuffix ?? "Api"}.ts` : "indexApi.ts"}`
+          `${this.config.apiDirPath ?? "src/api"}/${other.length > 0 ? `${changeCase.camelCase(modelPath)}${this.config.apiFileSuffix ?? "Api"}.ts` : "indexApi.ts"}`
         );
-        const funcName = changeCase__namespace.camelCase(other.length > 0 ? other.join("-") : modelPath);
+        const funcName = changeCase.camelCase(other.length > 0 ? other.join("-") : modelPath);
         const funcComment = genComment({
           title,
           method,
@@ -551,8 +547,7 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
   }
   // 递归处理refs
   handleRefs(schema = {}, componentsSchemas) {
-    if (!schema || typeof schema !== "object")
-      return schema;
+    if (!schema || typeof schema !== "object") return schema;
     if (schema["x-apifox-refs"]) {
       Object.keys(schema["x-apifox-refs"]).forEach((key) => {
         const refObj = schema["x-apifox-refs"][key];
@@ -608,17 +603,27 @@ export { ${methodPaths.map((item) => item.name).join(",")} };
   }
 }
 
+const logger$1 = {
+  success: (msg) => console.log(`\x1B[32m\u2714\x1B[0m ${msg}`),
+  warn: (msg) => console.warn(`\x1B[33m\u26A0\x1B[0m ${msg}`)
+};
 function init(cwd) {
   const configPath = path__default.resolve(cwd, `att.config.ts`);
   if (fs__namespace.existsSync(configPath)) {
-    consola__default.warn(`\u914D\u7F6E\u6587\u4EF6\u5DF2\u5B58\u5728: ${configPath}`);
+    logger$1.warn(`\u914D\u7F6E\u6587\u4EF6\u5DF2\u5B58\u5728: ${configPath}`);
     return;
   }
   const templatePath = path__default.resolve(__dirname, `./config.template`);
   fs__namespace.copyFileSync(templatePath, configPath);
-  consola__default.success(`\u914D\u7F6E\u6587\u4EF6\u5DF2\u751F\u6210: ${configPath}`);
+  logger$1.success(`\u914D\u7F6E\u6587\u4EF6\u5DF2\u751F\u6210: ${configPath}`);
 }
 
+const logger = {
+  success: (msg) => console.log(`\x1B[32m\u2714\x1B[0m ${msg}`),
+  error: (msg) => console.error(`\x1B[31m\u2716\x1B[0m`, msg),
+  info: (msg) => console.log(`\x1B[34m\u2139\x1B[0m ${msg}`),
+  warn: (msg) => console.warn(`\x1B[33m\u26A0\x1B[0m ${msg}`)
+};
 const att = async (config, cwd) => {
   const generator = new Generator(config, cwd);
   const spinner = ora__default("\u6B63\u5728\u83B7\u53D6\u63A5\u53E3\u6570\u636E...").start();
@@ -634,19 +639,26 @@ const att = async (config, cwd) => {
     await generator.write();
     delayNotice.cancel();
     spinner.stop();
-    consola__default.success("\u5199\u5165\u6587\u4EF6\u5B8C\u6BD5");
+    logger.success("\u5199\u5165\u6587\u4EF6\u5B8C\u6BD5");
   } catch (err) {
     spinner?.stop();
-    consola__default.error(err);
+    if (err?.isAxiosError) {
+      logger.error(`\u8BF7\u6C42\u63A5\u53E3\u5931\u8D25: ${err.message}${err.response ? ` (${err.response.status})` : ""}`);
+      if (err.code === "ECONNREFUSED" || err.code === "ENOTFOUND" || err.code === "ERR_NETWORK") {
+        logger.info("\u8BF7\u68C0\u67E5 serverUrl \u662F\u5426\u6B63\u786E\uFF0C\u4EE5\u53CA\u63A5\u53E3\u670D\u52A1\u662F\u5426\u5DF2\u542F\u52A8");
+      }
+    } else {
+      logger.error(err);
+    }
   }
 };
 const run = async (cwd) => {
   const configFile = path__default.join(cwd, "att.config.ts");
   const configFileExist = await fs__default.pathExists(configFile);
   if (!configFileExist) {
-    return consola__default.error(`\u627E\u4E0D\u5230\u914D\u7F6E\u6587\u4EF6: ${configFile}`);
+    return logger.error(`\u627E\u4E0D\u5230\u914D\u7F6E\u6587\u4EF6: ${configFile}`);
   }
-  consola__default.success(`\u627E\u5230\u914D\u7F6E\u6587\u4EF6: ${configFile}`);
+  logger.info(`\u627E\u5230\u914D\u7F6E\u6587\u4EF6: ${configFile}`);
   const packageJson = await fs__default.readJSON(path__default.resolve(cwd, "package.json"));
   const isESM = packageJson.type === "module";
   const { content: config } = await loadModule(

@@ -5,6 +5,7 @@ import { JSONSchema4 } from 'json-schema';
 import { compile, Options } from 'json-schema-to-typescript';
 import path from 'path';
 import prettier from 'prettier';
+import { pathToFileURL } from 'url';
 import {
   castArray,
   cloneDeepFast,
@@ -376,7 +377,8 @@ export const transformWithEsbuild = async (code: string, filename: string) => {
  * 加载ES模块
  */
 export async function loadESModule<T>(filepath: string): Promise<T> {
-  const handle = await import(`${filepath}?${Date.now()}`);
+  const url = pathToFileURL(filepath).href;
+  const handle = await import(`${url}?${Date.now()}`);
   return handle.default;
 }
 
@@ -398,7 +400,11 @@ export async function loadModule<T>(
   if (ext === '.ts' || (ext === '.js' && !isESM)) {
     const tsText = readFileSync(filepath, 'utf-8');
     const { code } = await transformWithEsbuild(tsText, filepath);
-    const tempFile = path.join(process.cwd(), tempPath, filepath.replace(/\.(ts|js)$/, '.mjs'));
+    const tempFile = path.join(
+      process.cwd(),
+      tempPath,
+      path.basename(filepath).replace(/\.(ts|js)$/, '.mjs'),
+    );
     const tempBasename = path.dirname(tempFile);
     mkdirSync(tempBasename, { recursive: true });
     writeFileSync(tempFile, code, 'utf8');

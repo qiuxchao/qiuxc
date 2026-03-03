@@ -1,6 +1,10 @@
-import consola from 'consola';
 import * as fs from 'fs-extra';
 import path from 'path';
+
+const logger = {
+  success: (msg: string) => console.log(`\x1b[32m✔\x1b[0m ${msg}`),
+  warn: (msg: string) => console.warn(`\x1b[33m⚠\x1b[0m ${msg}`),
+};
 
 /**
  * 初始化配置文件
@@ -10,10 +14,10 @@ import path from 'path';
 export default function init(cwd: string) {
   const configPath = path.resolve(cwd, `att.config.ts`);
   if (fs.existsSync(configPath)) {
-    consola.warn(`配置文件已存在: ${configPath}`);
+    logger.warn(`配置文件已存在: ${configPath}`);
     return;
   }
   const templatePath = path.resolve(__dirname, `./config.template`);
   fs.copyFileSync(templatePath, configPath);
-  consola.success(`配置文件已生成: ${configPath}`);
+  logger.success(`配置文件已生成: ${configPath}`);
 }
