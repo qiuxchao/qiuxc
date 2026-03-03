@@ -1,5 +1,11 @@
 # @qiuxc/apifox-to-typescript
 
+## 0.11.0
+
+### Minor Changes
+
+- 7e82bab: fix windows bug
+
 ## 0.10.0
 
 ### Minor Changes
